@@ -20,6 +20,7 @@ public class Main {
         System.out.println("Digite 'server %port%' para iniciar como servidor ou 'client %port%' para iniciar como cliente.");
         
         Scanner scn = new Scanner(System.in);
+        * ola
         
         while(true) {
         
