@@ -3,6 +3,7 @@ package com.xiuuu.xiuuu.main;
 import java.util.Scanner;
 
 import com.xiuuu.xiuuu.client.Client;
+import com.xiuuu.xiuuu.design.mainfx;
 import com.xiuuu.xiuuu.server.Server;
 import java.io.IOException;
 
@@ -13,6 +14,9 @@ public class Main {
     
     public static void main(String[] args) throws IOException {
         
+        mainfx m = new mainfx();
+        m.call();
+        /**
         System.out.println("Digite 'server %port%' para iniciar como servidor ou 'client %port%' para iniciar como cliente.");
         
         Scanner scn = new Scanner(System.in);
@@ -43,7 +47,7 @@ public class Main {
 
             }
         
-        }
+        }**/
         
     }
     

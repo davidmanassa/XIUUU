@@ -17,7 +17,7 @@ public class Server {
     }
     
     public void startServer() throws IOException {
-            
+          
         int id_client = 0;
         ServerSocket ss = new ServerSocket(listening_port);
 
