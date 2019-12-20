@@ -5,6 +5,16 @@
     <artifactId>XIUUU</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
+    <build>
+        <resources>
+            <resource>
+                <directory>main/resources</directory>
+                <includes>
+                    <include>*.png</include>
+                </includes>
+            </resource>
+        </resources>
+    </build>
     <repositories>
         <repository>
             <id>unknown-jars-temp-repo</id>
@@ -17,6 +27,12 @@
             <groupId>unknown.binary</groupId>
             <artifactId>AbsoluteLayout</artifactId>
             <version>SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>LATEST</version>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
     <properties>

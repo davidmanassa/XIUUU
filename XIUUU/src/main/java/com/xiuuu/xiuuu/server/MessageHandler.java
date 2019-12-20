@@ -1,5 +1,7 @@
 package com.xiuuu.xiuuu.server;
 
+import com.xiuuu.xiuuu.util.EncryptType;
+
 public class MessageHandler {
     
     String encryptedMessage;

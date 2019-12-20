@@ -6,14 +6,25 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.HashMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
-public class Server {
+public class Server extends Thread {
     
     public static HashMap<Integer, ClientHandler> connect_list = new HashMap<>();
     int listening_port;
     
-    public Server(int port) {
+    public Server(int port) throws IOException {
         this.listening_port = port;
+    }
+    
+    @Override
+    public void run() {
+        try {
+            startServer();
+        } catch (IOException ex) {
+            Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
     
     public void startServer() throws IOException {

@@ -1,23 +1,37 @@
 package com.xiuuu.xiuuu.client;
 
+import com.xiuuu.xiuuu.server.Server;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.util.Scanner; 
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 
-public class Client {
+public class Client extends Thread {
     
     int port;
+    String username;
     
-    public Client(int port) {
+    public Client(int port, String username) {
         this.port = port;
+        this.username = username;
     }
     
     public static void recived(String text) {
         System.out.println(text + "\n");
+    }
+    
+    public String getUsername() {
+        return this.username;
+    }
+    
+    @Override
+    public void run() {
+        startClient();
     }
     
     public void startClient() {
