@@ -1,10 +1,14 @@
 package com.xiuuu.xiuuu.main;
 
 import com.xiuuu.xiuuu.client.Client;
-import com.xiuuu.xiuuu.design.modeSelect;
+import com.xiuuu.xiuuu.design.A_modeSelect;
+import com.xiuuu.xiuuu.design.C_clientList;
+import com.xiuuu.xiuuu.encrypt.EncryptManager;
 import com.xiuuu.xiuuu.server.Server;
+import com.xiuuu.xiuuu.encrypt.EncryptType;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 public class Main {
     
@@ -13,6 +17,9 @@ public class Main {
     private boolean isServer = false;
     private Server server = null;
     private Client client = null;
+    
+    private C_clientList cl;
+    private EncryptManager em;
     
     public static Main getIns() {
         return main;
@@ -32,11 +39,33 @@ public class Main {
         return client;
     }
     
+    public EncryptManager getEncryptManager() {
+        return this.em;
+    }
+    
+    public void sets() {
+        em = new EncryptManager();
+    }
+    
+    public C_clientList getC_clientList() {
+        if (this.cl == null)
+            cl = new C_clientList();
+        return cl;
+    }
+    
+    public void update(ArrayList<String> connecteds) {
+        if (cl != null)
+            cl.update(connecteds);
+    }
+    
     public static void main(String[] args) throws IOException {
         
         main = new Main();
+        getIns().sets();
         
-        new modeSelect().setVisible(true);
+        new A_modeSelect().setVisible(true);
+        
+        
         
         /**
         System.out.println("Digite 'server %port%' para iniciar como servidor ou 'client %port%' para iniciar como cliente.");

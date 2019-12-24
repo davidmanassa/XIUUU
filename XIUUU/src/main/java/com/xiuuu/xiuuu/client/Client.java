@@ -1,20 +1,21 @@
 package com.xiuuu.xiuuu.client;
 
-import com.xiuuu.xiuuu.server.Server;
+import com.xiuuu.xiuuu.main.Main;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.Socket;
-import java.util.Scanner; 
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
+import java.util.ArrayList;
+import java.util.Scanner;
 
 public class Client extends Thread {
     
     int port;
     String username;
+    
+    private DataInputStream dis = null; 
+    private DataOutputStream dos = null;
     
     public Client(int port, String username) {
         this.port = port;
@@ -22,6 +23,21 @@ public class Client extends Thread {
     }
     
     public static void recived(String text) {
+        
+        // userList%username1%username2
+        if (text.startsWith("userList%")) {
+            ArrayList<String> al = new ArrayList<>();
+            String[] s = text.split("%");
+            int i = 0;
+            for (String s1 : s) {
+                if (i >= 1 && i <= (s.length-1))
+                    al.add(s1);
+                i++;
+            }
+            
+            Main.getIns().update(al);
+        }
+        
         System.out.println(text + "\n");
     }
     
@@ -34,25 +50,33 @@ public class Client extends Thread {
         startClient();
     }
     
+    public void send(String message) throws IOException {
+        this.dos.writeUTF(message);
+    }
+    
     public void startClient() {
         
         try {
             
-            Scanner scn = new Scanner(System.in); 
-
             // getting localhost ip 
             InetAddress ip = InetAddress.getByName("localhost"); 
 
             Socket s = new Socket(ip, port); 
 
             // obtaining input and out streams 
-            DataInputStream dis = new DataInputStream(s.getInputStream()); 
-            DataOutputStream dos = new DataOutputStream(s.getOutputStream()); 
+            this.dis = new DataInputStream(s.getInputStream()); 
+            this.dos = new DataOutputStream(s.getOutputStream()); 
 
+            dos.writeUTF(username);
+            
             // One thread for all received content from server
             Thread t = new Receiving(dis);
             t.start();
             
+            ClientService cs = new ClientService();
+            cs.start();
+            
+            /**
             while (true) { 
                 
                 String tosend = scn.nextLine(); 
@@ -72,7 +96,7 @@ public class Client extends Thread {
             scn.close();
             dis.close();
             dos.close();
-            
+            **/
         }catch(Exception e) {
             e.printStackTrace();
         }

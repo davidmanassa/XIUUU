@@ -11,9 +11,9 @@ class ClientHandler extends Thread {
     final DataInputStream dis; 
     final DataOutputStream dos; 
     final Socket s; 
-    final int id_client ;
+    final String id_client ;
 
-    public ClientHandler(Socket s, DataInputStream dis, DataOutputStream dos, int id_client) { 
+    public ClientHandler(Socket s, DataInputStream dis, DataOutputStream dos, String id_client) { 
         this.s = s; 
         this.dis = dis; 
         this.dos = dos; 
@@ -58,6 +58,15 @@ class ClientHandler extends Thread {
                     dos.writeUTF("Message send to " + toID + ": " + message);
                     Server.connect_list.get(toID).dos.writeUTF("Message recived from " + id_client + ": " + message);
                     
+                } else if (received.startsWith("getUserList")) {
+                
+                    StringBuilder out = new StringBuilder("userList");
+                    
+                    for (String s : Server.connect_list.keySet())
+                        out.append("%").append(s);
+                    
+                    dos.writeUTF(out.toString());
+                        
                 } else {
                     switch (received) {
 
@@ -74,7 +83,7 @@ class ClientHandler extends Thread {
                             break;
 
                         default:
-                            dos.writeUTF("Invalid input.");
+                            dos.writeUTF("Invalid input: " + received);
                             break;
 
                     }

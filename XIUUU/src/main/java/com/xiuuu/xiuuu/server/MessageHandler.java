@@ -1,6 +1,6 @@
 package com.xiuuu.xiuuu.server;
 
-import com.xiuuu.xiuuu.util.EncryptType;
+import com.xiuuu.xiuuu.encrypt.EncryptType;
 
 public class MessageHandler {
     
