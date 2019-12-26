@@ -8,6 +8,7 @@ import java.net.Socket;
 import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 
 public class Server extends Thread {
     
@@ -17,6 +18,11 @@ public class Server extends Thread {
     public Server(int port) throws IOException {
         this.listening_port = port;
     }
+
+    
+    public int getPort() {
+        return this.listening_port;
+    }
     
     @Override
     public void run() {
@@ -24,6 +30,7 @@ public class Server extends Thread {
             startServer();
         } catch (IOException ex) {
             Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
+            System.exit(0);
         }
     }
     
@@ -44,14 +51,14 @@ public class Server extends Thread {
                 
                 System.out.println("A new client (id = " + String.valueOf(id_client) + ") is connected : " + s);
                 
-                // obtaining input and out streams 
+                // obtaining input and out streams
                 DataInputStream dis = new DataInputStream(s.getInputStream()); 
                 DataOutputStream dos = new DataOutputStream(s.getOutputStream()); 
 
                 System.out.println("Assigning new thread for this client");
                 
                 id_client = dis.readUTF();
-
+                
                 ClientHandler ch = new ClientHandler(s, dis, dos, id_client);
                 Thread t = ch;
                 t.start();

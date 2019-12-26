@@ -1,9 +1,11 @@
 package com.xiuuu.xiuuu.server;
 
+import com.xiuuu.xiuuu.main.Main;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.Date;
 
 class ClientHandler extends Thread { 
@@ -52,20 +54,25 @@ class ClientHandler extends Thread {
                 // answer from the client
                 if (received.startsWith("tosend%")) {
                     
-                    int toID = Integer.parseInt(received.split("%")[1]);
+                    String toID = received.split("%")[1];
                     String message = received.split("%")[2];
                     
                     dos.writeUTF("Message send to " + toID + ": " + message);
-                    Server.connect_list.get(toID).dos.writeUTF("Message recived from " + id_client + ": " + message);
+                    Server.connect_list.get(toID).dos.writeUTF("messageFrom%" + id_client + "%" + message);
                     
                 } else if (received.startsWith("getUserList")) {
                 
                     StringBuilder out = new StringBuilder("userList");
+                    ArrayList<String> users = new ArrayList<>();
                     
-                    for (String s : Server.connect_list.keySet())
+                    for (String s : Server.connect_list.keySet()) {
                         out.append("%").append(s);
+                        users.add(s);
+                    }
                     
                     dos.writeUTF(out.toString());
+                    
+                    Main.getIns().getC_clientList().update(users);
                         
                 } else {
                     switch (received) {

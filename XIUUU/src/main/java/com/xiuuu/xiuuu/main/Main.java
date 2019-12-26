@@ -5,7 +5,6 @@ import com.xiuuu.xiuuu.design.A_modeSelect;
 import com.xiuuu.xiuuu.design.C_clientList;
 import com.xiuuu.xiuuu.encrypt.EncryptManager;
 import com.xiuuu.xiuuu.server.Server;
-import com.xiuuu.xiuuu.encrypt.EncryptType;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -13,6 +12,8 @@ import java.util.ArrayList;
 public class Main {
     
     private static Main main;
+    
+    private int port;
     
     private boolean isServer = false;
     private Server server = null;
@@ -39,6 +40,10 @@ public class Main {
         return client;
     }
     
+    public Server getServer() {
+        return server;
+    }
+    
     public EncryptManager getEncryptManager() {
         return this.em;
     }
@@ -51,6 +56,13 @@ public class Main {
         if (this.cl == null)
             cl = new C_clientList();
         return cl;
+    }
+    
+    public int getPort() {
+        if (isServer)
+            return getServer().getPort();
+        else
+            return getClient().getPort();
     }
     
     public void update(ArrayList<String> connecteds) {

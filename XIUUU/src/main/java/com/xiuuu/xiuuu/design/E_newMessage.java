@@ -4,23 +4,32 @@ import com.xiuuu.xiuuu.encrypt.EncryptType;
 import com.xiuuu.xiuuu.main.Main;
 import com.xiuuu.xiuuu.util.JFrameUtils;
 import java.awt.Dimension;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 
 public class E_newMessage extends javax.swing.JFrame {
 
-    public E_newMessage() {
+    String to;
+    EncryptType et;
+    
+    public E_newMessage(String to) {
         initComponents();
         
+        this.to = to;
         this.setTitle("XIUUU");
         setDefaultCloseOperation(HIDE_ON_CLOSE);
         JFrameUtils.setWindowPosition(this, 0);
         this.setMinimumSize(new Dimension(500, 350));
         
-        EncryptType et = Main.getIns().getEncryptManager().getLastUsed();
+        this.et = Main.getIns().getEncryptManager().getLastUsed();
         if (et == null) {
             JOptionPane.showMessageDialog(this, "Erro ao iniciar mensagem.", "Erro", JOptionPane.ERROR_MESSAGE);
             dispose();
         }
+        
+        this.jButton1.setText(jButton1.getText().replace("%username%", to));
         
     }
 
@@ -57,6 +66,11 @@ public class E_newMessage extends javax.swing.JFrame {
 
         jButton1.setFont(new java.awt.Font("Courier 10 Pitch", 0, 18)); // NOI18N
         jButton1.setText("Enviar para %username%");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -90,10 +104,7 @@ public class E_newMessage extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void textInput_SecretMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_textInput_SecretMouseClicked
-        JOptionPane.showMessageDialog(this,
-            "IPs ainda não suportados.",
-            "Error",
-            JOptionPane.ERROR_MESSAGE);
+     
     }//GEN-LAST:event_textInput_SecretMouseClicked
 
     private void textInput_SecretInputMethodTextChanged(java.awt.event.InputMethodEvent evt) {//GEN-FIRST:event_textInput_SecretInputMethodTextChanged
@@ -103,6 +114,17 @@ public class E_newMessage extends javax.swing.JFrame {
     private void textInput_SecretActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_textInput_SecretActionPerformed
 
     }//GEN-LAST:event_textInput_SecretActionPerformed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        
+        try {
+            Main.getIns().getClient().sendSecret(this.to, this.textInput_Secret.getText());
+        } catch (IOException ex) {
+            Logger.getLogger(E_newMessage.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        dispose();
+        
+    }//GEN-LAST:event_jButton1ActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;

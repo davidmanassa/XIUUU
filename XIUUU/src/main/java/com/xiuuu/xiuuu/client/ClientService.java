@@ -1,6 +1,5 @@
 package com.xiuuu.xiuuu.client;
 
-import com.xiuuu.xiuuu.design.C_clientList;
 import com.xiuuu.xiuuu.main.Main;
 import java.io.IOException;
 import java.util.logging.Level;

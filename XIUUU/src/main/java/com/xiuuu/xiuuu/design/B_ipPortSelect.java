@@ -169,6 +169,7 @@ public class B_ipPortSelect extends javax.swing.JFrame {
                 "Erro ao iniciar servidor.",
                 "Error",
                 JOptionPane.ERROR_MESSAGE);
+                System.out.println("AAAAAAAAAA");
                 Logger.getLogger(B_ipPortSelect.class.getName()).log(Level.SEVERE, null, ex);
             }
         } else {

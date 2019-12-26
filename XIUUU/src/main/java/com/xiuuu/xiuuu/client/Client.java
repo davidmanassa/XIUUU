@@ -1,5 +1,6 @@
 package com.xiuuu.xiuuu.client;
 
+import com.xiuuu.xiuuu.design.Z_messageReceived;
 import com.xiuuu.xiuuu.main.Main;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -7,7 +8,6 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.util.ArrayList;
-import java.util.Scanner;
 
 public class Client extends Thread {
     
@@ -36,6 +36,11 @@ public class Client extends Thread {
             }
             
             Main.getIns().update(al);
+        } else if (text.startsWith("messageFrom%")) {
+            
+            String author = text.split("%")[1], msg = text.split("%")[2];
+            new Z_messageReceived(author, msg).setVisible(true);
+            
         }
         
         System.out.println(text + "\n");
@@ -45,9 +50,17 @@ public class Client extends Thread {
         return this.username;
     }
     
+    public int getPort() {
+        return this.port;
+    }
+    
     @Override
     public void run() {
         startClient();
+    }
+    
+    public void sendSecret(String tosend, String message) throws IOException {
+        this.dos.writeUTF("tosend%" + tosend + "%" + message);
     }
     
     public void send(String message) throws IOException {

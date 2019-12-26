@@ -17,10 +17,12 @@ import javax.swing.JRadioButton;
 public class D_encryptMethod extends javax.swing.JFrame {
 
     ArrayList<JRadioButton> buttons;
+    String to;
     
-    public D_encryptMethod() {
+    public D_encryptMethod(String to) {
         initComponents();
         
+        this.to = to;
         buttons = new ArrayList<>();
         
         this.setTitle("XIUUU");
@@ -64,8 +66,11 @@ public class D_encryptMethod extends javax.swing.JFrame {
                 for (JRadioButton b : buttons)
                     if (b.isSelected())
                         for (EncryptType et1 : EncryptType.values())
-                            if (et1.name().equalsIgnoreCase(b.getText()))
+                            if (et1.name().equalsIgnoreCase(b.getText())) {
                                 Main.getIns().getEncryptManager().setLastUsed(et1);
+                                dispose();
+                                new E_newMessage(to).setVisible(true);
+                            }
             }
         });
         

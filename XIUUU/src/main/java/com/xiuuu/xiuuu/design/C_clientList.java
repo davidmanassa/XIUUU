@@ -30,7 +30,10 @@ public class C_clientList extends JFrame {
     public C_clientList() {
         this.clp = new clientListPanel();
         
-        this.setTitle("XIUUU");
+        if (Main.getIns().isServer())
+            this.setTitle("XIUUU - " + Main.getIns().getPort());
+        else
+            this.setTitle("XIUUU - " + Main.getIns().getPort() + " - " + Main.getIns().getClient().getUsername());
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         JFrameUtils.setWindowPosition(this, 0);
         this.setMinimumSize(new Dimension(500, 500));
@@ -47,8 +50,7 @@ public class C_clientList extends JFrame {
     public void update(ArrayList<String> connecteds) {
         clp.removeAll();
         for (String c : connecteds) {
-            System.out.println(" " + c);
-                clp.addPanel(getUserPanel(c, "avatar.png"), 2);
+            clp.addPanel(getUserPanel(c, "avatar.png"), 2);
         }
     }
     
@@ -67,24 +69,28 @@ public class C_clientList extends JFrame {
         panel.add(usernameLabel);
         panel.setBackground(Color.white);
         if (!Main.getIns().isServer()) {
-            panel.addMouseListener(new MouseAdapter() {
-                private Color background;
+            if (username.equalsIgnoreCase(Main.getIns().getClient().getUsername()))
+                panel.setBackground(Color.gray);
+            else
+                panel.addMouseListener(new MouseAdapter() {
+                    private Color background;
 
-                @Override
-                public void mousePressed(MouseEvent e) {
-                    background = getBackground();
-                    setBackground(Color.RED);
-                    repaint();
-                    new D_encryptMethod().setVisible(true);
-                }
+                    @Override
+                    public void mousePressed(MouseEvent e) {
+                        background = getBackground();
+                        panel.setBackground(Color.red);
+                        repaint();
+                        new D_encryptMethod(username).setVisible(true);
+                    }
 
-                @Override
-                public void mouseReleased(MouseEvent e) {
-                    setBackground(background);
-                }
-                
-            });
-        }
+                    @Override
+                    public void mouseReleased(MouseEvent e) {
+                        panel.setBackground(background);
+                    }
+
+                });
+        } else
+            panel.setBackground(Color.red);
         
         return panel;
     }

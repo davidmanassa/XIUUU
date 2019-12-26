@@ -1,51 +1,57 @@
 package com.xiuuu.xiuuu.design;
 
 import com.xiuuu.xiuuu.util.JFrameUtils;
+import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.GridLayout;
+import javax.swing.JLabel;
+import javax.swing.JTextArea;
 
 public class Z_messageReceived extends javax.swing.JFrame {
 
-    public Z_messageReceived() {
+    public Z_messageReceived(String author, String message) {
         initComponents();
         
         this.setTitle("XIUUU");
         setDefaultCloseOperation(HIDE_ON_CLOSE);
         JFrameUtils.setWindowPosition(this, 0);
         this.setMinimumSize(new Dimension(500, 200));
+        
+        setLayout(new GridLayout(0, 1));
+        
+        JLabel title = new JLabel();
+        title.setText("Nova mensagem de " + author + ":");
+        title.setFont(new Font("Courier New", 1, 18));
+        JTextArea jta = new JTextArea(message);
+        jta.setFont(new Font("Courier New", 0, 18));
+        jta.setLineWrap(true);
+        jta.setWrapStyleWord(true);
+        
+        add(title, BorderLayout.NORTH);
+        add(jta, BorderLayout.NORTH);
     }
 
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        text = new javax.swing.JLabel();
-
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-
-        text.setFont(new java.awt.Font("Courier New", 1, 18)); // NOI18N
-        text.setText("Recebeu uma mensagem:");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(text, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGap(36, 36, 36))
+            .addGap(0, 309, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(text)
-                .addContainerGap(266, Short.MAX_VALUE))
+            .addGap(0, 300, Short.MAX_VALUE)
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JLabel text;
     // End of variables declaration//GEN-END:variables
 }
