@@ -1,7 +1,6 @@
 package com.xiuuu.xiuuu.encrypt;
 
 import com.xiuuu.xiuuu.client.Client;
-import java.util.ArrayList;
 import java.util.HashMap;
 
 public class EncryptManager {

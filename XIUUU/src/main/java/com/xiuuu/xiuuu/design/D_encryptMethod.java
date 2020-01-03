@@ -40,6 +40,8 @@ public class D_encryptMethod extends javax.swing.JFrame {
         JRadioButton jrb = new JRadioButton();
         jrb.setLayout(new GridLayout(0, 1));
         for (EncryptType et : EncryptType.values()) {
+            if (et == EncryptType.None)
+                continue;
             JRadioButton j1 = new JRadioButton(et.name());
             j1.addActionListener(new ActionListener() {
                 @Override
