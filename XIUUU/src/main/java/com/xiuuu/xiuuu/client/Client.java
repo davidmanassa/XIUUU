@@ -147,12 +147,7 @@ public class Client extends Thread {
             
         } catch (UnknownHostException ex) {
             Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException | InvalidKeyException | SignatureException | NoSuchAlgorithmException ex) {
-<<<<<<< Updated upstream
-            Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (ClassNotFoundException ex) {
-=======
->>>>>>> Stashed changes
+        } catch (IOException | InvalidKeyException | SignatureException | NoSuchAlgorithmException | ClassNotFoundException ex) {
             Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
         }
         return null;
