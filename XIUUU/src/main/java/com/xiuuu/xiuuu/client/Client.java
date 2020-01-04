@@ -10,6 +10,7 @@ import java.io.ObjectOutputStream;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.UnknownHostException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
@@ -87,55 +88,65 @@ public class Client extends Thread {
         startClient();
     }
     
-    public String sendSecret(String username, String message, EncryptType et) throws IOException {
-        
-        if (connectedUsers == null || connectedUsers.isEmpty())
-            return "error";
-        
-        if (!connectedUsers.containsKey(username))
-            return "user not found";
-        
-        InetAddress ip = InetAddress.getByName("localhost"); 
-        Socket socket = new Socket(ip, connectedUsers.get(username) + 1);
-        
-        ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
-        ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
-        
-        out.writeObject(et);
-        out.flush();
-        
-        if (et == EncryptType.DiffieHellman) {
-            
-            // send G and P ...
-            
-        }
-        
-        // Digital Signature
-        
-        PublicKey pk = EncryptManager.getIns().getDigitalSIgnature().getMyPk();
-        out.writeUTF(username);
-        out.flush();
-        out.writeObject(pk);
-        out.flush();
+    public String sendSecret(String username, String message, EncryptType et) {
         
         try {
-            byte[] signedMessage = EncryptManager.getIns().getDigitalSIgnature().getSignature(message);
             
-            out.writeUTF(message);
-            out.write(signedMessage);
+            if (connectedUsers == null || connectedUsers.isEmpty())
+                return "error";
             
-        } catch (NoSuchAlgorithmException ex) {
+            if (!connectedUsers.containsKey(username))
+                return "user not found";
+            
+            InetAddress ip = InetAddress.getByName("localhost");
+            Socket socket = new Socket(ip, connectedUsers.get(username) + 1);
+            
+            ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
+            ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
+            
+            out.writeObject(et);
+            out.flush();
+
+            if (et == EncryptType.DiffieHellman) {
+                
+                // send G and P ...
+                
+            }
+            
+            // Digital Signature
+            
+            PublicKey pk = EncryptManager.getIns().getDigitalSIgnature().getMyPk();
+            out.writeUTF(username);
+            out.flush();
+            out.writeObject(pk);
+            out.flush();
+            
+            try {
+                byte[] signedMessage = EncryptManager.getIns().getDigitalSIgnature().getSignature(message);
+                
+                out.writeUTF(message);
+                out.flush();
+                out.writeObject(signedMessage);
+                out.flush();
+                
+            } catch (NoSuchAlgorithmException ex) {
+                Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (InvalidKeyException ex) {
+                Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (SignatureException ex) {
+                Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            
+            return "success";
+            
+            //dos.writeUTF("tosend%" + tosend + "%" + message);
+            //dos.flush();
+        } catch (UnknownHostException ex) {
             Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (InvalidKeyException ex) {
-            Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (SignatureException ex) {
+        } catch (IOException ex) {
             Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
-        return "success";
-        
-        //dos.writeUTF("tosend%" + tosend + "%" + message);
-        //dos.flush();
+        return null;
     }
     
     public void sendString(String message) throws IOException {
@@ -185,8 +196,6 @@ class ReceivingSecrets extends Thread {
     @Override
     public void run() {
         
-        System.out.println(port);
-        
         try {
             
             ServerSocket ss = new ServerSocket(port + 1);
@@ -212,9 +221,8 @@ class ReceivingSecrets extends Thread {
                 PublicKey pk = (PublicKey) in.readObject();
                 
                 EncryptManager.getIns().getDigitalSIgnature().receivedIdentification(receivedUsername, pk);
-                
                 String message = in.readUTF();
-                byte[] signature = in.readAllBytes();
+                byte[] signature = (byte[]) in.readObject();
                 
                 boolean validated = EncryptManager.getIns().getDigitalSIgnature().verifySignature(receivedUsername, message, signature);
                 if (!validated) {
@@ -223,9 +231,7 @@ class ReceivingSecrets extends Thread {
                     Client.ins.showSecret(receivedUsername, message);
                 }
             }
-    
-        } catch (IOException ex) {
-            Logger.getLogger(ReceivingSecrets.class.getName()).log(Level.SEVERE, null, ex);
+        
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(ReceivingSecrets.class.getName()).log(Level.SEVERE, null, ex);
         } catch (NoSuchAlgorithmException ex) {
@@ -233,6 +239,8 @@ class ReceivingSecrets extends Thread {
         } catch (InvalidKeyException ex) {
             Logger.getLogger(ReceivingSecrets.class.getName()).log(Level.SEVERE, null, ex);
         } catch (SignatureException ex) {
+            Logger.getLogger(ReceivingSecrets.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
             Logger.getLogger(ReceivingSecrets.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
