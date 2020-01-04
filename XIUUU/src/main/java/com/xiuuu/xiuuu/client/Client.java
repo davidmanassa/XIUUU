@@ -19,8 +19,6 @@ import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.SignatureException;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Base64;
 import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -116,12 +114,17 @@ public class Client extends Thread {
                 
                 // send G and P ...
                 
-            }else if (et == EncryptType.RSA){
-              ObjectInputStream inputStream = new ObjectInputStream(new FileInputStream((String) in.readObject()));
+            } else if (et == EncryptType.RSA) {
+                
+                ObjectInputStream inputStream = new ObjectInputStream(new FileInputStream((String) in.readObject()));
               
                 byte[] criptograma = RSA.encrypt(message,(PublicKey) inputStream.readObject());
                 out.writeObject(criptograma);
                 out.flush();
+                
+            } else if (et == EncryptType.MerklePuzzle) {
+                
+            } else if (et == EncryptType.PBKDF2) {
                 
             }
             
@@ -132,30 +135,19 @@ public class Client extends Thread {
             out.flush();
             out.writeObject(pk);
             out.flush();
-            
-            try {
-                byte[] signedMessage = EncryptManager.getIns().getDigitalSIgnature().getSignature(message);
-                
-                out.writeUTF(message);
-                out.flush();
-                out.writeObject(signedMessage);
-                out.flush();
-                
-            } catch (NoSuchAlgorithmException ex) {
-                Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (InvalidKeyException ex) {
-                Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (SignatureException ex) {
-                Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
-            }
+           
+            byte[] signedMessage = EncryptManager.getIns().getDigitalSIgnature().getSignature(message);
+
+            out.writeUTF(message);
+            out.flush();
+            out.writeObject(signedMessage);
+            out.flush();
             
             return "success";
             
-            //dos.writeUTF("tosend%" + tosend + "%" + message);
-            //dos.flush();
         } catch (UnknownHostException ex) {
             Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException ex) {
+        } catch (IOException | InvalidKeyException | SignatureException | NoSuchAlgorithmException ex) {
             Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
@@ -239,7 +231,9 @@ class ReceivingSecrets extends Thread {
                     ObjectInputStream inputStream = new ObjectInputStream(new FileInputStream(RSA.PRIVATE_KEY_FILE));
                     PrivateKey privatekey = (PrivateKey) inputStream.readObject();
                     mensagem = RSA.decrypt(criptograma,privatekey);
-                } //...
+                } else if (et == EncryptType.PBKDF2) {
+                    
+                }
                 
                 // Digital Signature
                 
@@ -257,22 +251,15 @@ class ReceivingSecrets extends Thread {
                     
                     //Client.ins.showSecret(receivedUsername,"\n Mensagem : "+ mensagem);
                     if(et == EncryptType.RSA){
-                    Client.ins.showSecret(receivedUsername,"Type= "+et.toString()+"\nCriptograma : "+criptograma.toString()+"\nMensagem : "+ mensagem);
+                        Client.ins.showSecret(receivedUsername, "Type= "+ et.toString() + "\nCriptograma : " + criptograma.toString() + "\nMensagem : " + mensagem);
                     }else{
-                    Client.ins.showSecret(receivedUsername,mensagem);
+                        Client.ins.showSecret(receivedUsername, mensagem);
                     }
+                    
                 }
             }
         
-        } catch (ClassNotFoundException ex) {
-            Logger.getLogger(ReceivingSecrets.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (NoSuchAlgorithmException ex) {
-            Logger.getLogger(ReceivingSecrets.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (InvalidKeyException ex) {
-            Logger.getLogger(ReceivingSecrets.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (SignatureException ex) {
-            Logger.getLogger(ReceivingSecrets.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException ex) {
+        } catch (ClassNotFoundException | NoSuchAlgorithmException | InvalidKeyException | SignatureException | IOException ex) {
             Logger.getLogger(ReceivingSecrets.class.getName()).log(Level.SEVERE, null, ex);
         }
     }

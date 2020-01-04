@@ -4,9 +4,6 @@ import com.xiuuu.xiuuu.encrypt.EncryptType;
 import com.xiuuu.xiuuu.main.Main;
 import com.xiuuu.xiuuu.util.JFrameUtils;
 import java.awt.Dimension;
-import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 
 public class E_newMessage extends javax.swing.JFrame {
@@ -116,8 +113,7 @@ public class E_newMessage extends javax.swing.JFrame {
     }//GEN-LAST:event_textInput_SecretActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        
-        
+             
         Main.getIns().getClient().sendSecret(this.to, this.textInput_Secret.getText(), et);
         dispose();
         
