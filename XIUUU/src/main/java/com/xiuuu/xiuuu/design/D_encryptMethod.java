@@ -71,7 +71,10 @@ public class D_encryptMethod extends javax.swing.JFrame {
                             if (et1.name().equalsIgnoreCase(b.getText())) {
                                 Main.getIns().getEncryptManager().setLastUsed(et1);
                                 dispose();
-                                new E_newMessage(to).setVisible(true);
+                                if (et1 == EncryptType.PBKDF2)
+                                    new E_PBKDF2(to).setVisible(true);
+                                else
+                                    new E_newMessage(to).setVisible(true);
                             }
             }
         });

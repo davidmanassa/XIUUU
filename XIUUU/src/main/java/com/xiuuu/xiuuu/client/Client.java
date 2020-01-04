@@ -1,14 +1,18 @@
 package com.xiuuu.xiuuu.client;
 
 import com.xiuuu.xiuuu.design.Z_messageReceived;
+import com.xiuuu.xiuuu.encrypt.AES;
+import com.xiuuu.xiuuu.encrypt.DiffieHellman;
 import com.xiuuu.xiuuu.encrypt.EncryptManager;
 import com.xiuuu.xiuuu.encrypt.EncryptType;
+import com.xiuuu.xiuuu.encrypt.PBKDF2;
 import com.xiuuu.xiuuu.encrypt.RSA;
 import com.xiuuu.xiuuu.main.Main;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.math.BigInteger;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -17,6 +21,7 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
+import java.security.SecureRandom;
 import java.security.SignatureException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -92,6 +97,10 @@ public class Client extends Thread {
     }
     
     public String sendSecret(String username, String message, EncryptType et) {
+        return sendSecret(username, message, et, "", 0);
+    }
+    
+    public String sendSecret(String username, String message, EncryptType et, String PBKDF2pass, int PBKDF2option) {
         
         try {
             
@@ -112,7 +121,38 @@ public class Client extends Thread {
 
             if (et == EncryptType.DiffieHellman) {
                 
-                // send G and P ...
+                SecureRandom rnd = new SecureRandom();
+                BigInteger P, G, x, X, Y, K;
+                
+                boolean b;
+                do {
+                    P = BigInteger.probablePrime(1024, rnd);
+                    b = P.isProbablePrime(100);
+                } while(!b);
+                System.out.println("Generated P: " + P.toString());
+                
+                G = DiffieHellman.findPrimeRoot(P);
+                System.out.println("Generated G: " + G.toString());
+                
+                x = DiffieHellman.findPrimeRoot(P);
+                System.out.println("Generated x: " + x.toString());
+                
+                X = G.modPow(x, P);  // X = G^x mod P
+                
+                out.writeObject(P);
+                out.flush();
+                out.writeObject(G);
+                out.flush();
+                out.writeObject(X);
+                out.flush();
+                        
+                Y = (BigInteger) in.readObject();
+                
+                K = Y.modPow(x, P);
+                
+                String criptograma = AES.encrypt(message, K.toString());
+                out.writeObject(criptograma);
+                out.flush();
                 
             } else if (et == EncryptType.RSA) {
                 
@@ -125,6 +165,11 @@ public class Client extends Thread {
             } else if (et == EncryptType.MerklePuzzle) {
                 
             } else if (et == EncryptType.PBKDF2) {
+                
+                PBKDF2 pbkdf2 = new PBKDF2(PBKDF2pass, PBKDF2option);
+                String criptograma = pbkdf2.encrypt(message);
+                
+                out.writeObject(criptograma);
                 
             }
             
@@ -148,6 +193,8 @@ public class Client extends Thread {
         } catch (UnknownHostException ex) {
             Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException | InvalidKeyException | SignatureException | NoSuchAlgorithmException | ClassNotFoundException ex) {
+            Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (Exception ex) {
             Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
         }
         return null;
@@ -185,6 +232,7 @@ public class Client extends Thread {
             
         }catch(Exception e) {
             e.printStackTrace();
+            System.exit(0);
         }
     }
 }
@@ -213,10 +261,26 @@ class ReceivingSecrets extends Thread {
                 
                 EncryptType et = (EncryptType) in.readObject();
                 
-                String mensagem= "";
+                String message = "";
                 byte[] criptograma = null;
+                BigInteger P = null, G = null, X, y, Y, K = null;
                 
                 if (et == EncryptType.DiffieHellman) {
+                    
+                    P = (BigInteger) in.readObject();
+                    G = (BigInteger) in.readObject();
+                    X = (BigInteger) in.readObject();
+
+                    y = DiffieHellman.findPrimeRoot(P);
+                
+                    Y = G.modPow(y, P);  // X = g^x mod p
+                    
+                    out.writeObject(Y);
+                    out.flush();
+                    
+                    K = X.modPow(y, P);
+                    String cript = (String) in.readObject();
+                    message = AES.decrypt(cript, K.toString());
                     
                 } else if (et == EncryptType.MerklePuzzle) {
                     
@@ -228,8 +292,15 @@ class ReceivingSecrets extends Thread {
                     criptograma = (byte[]) in.readObject();
                     ObjectInputStream inputStream = new ObjectInputStream(new FileInputStream(RSA.PRIVATE_KEY_FILE));
                     PrivateKey privatekey = (PrivateKey) inputStream.readObject();
-                    mensagem = RSA.decrypt(criptograma,privatekey);
+                    message = RSA.decrypt(criptograma,privatekey);
+                    
                 } else if (et == EncryptType.PBKDF2) {
+                    
+                    String cript = (String) in.readObject();
+                    
+                    // FALTA DESENCRIPTAR
+                    
+                    message = cript;
                     
                 }
                 
@@ -239,22 +310,31 @@ class ReceivingSecrets extends Thread {
                 PublicKey pk = (PublicKey) in.readObject();
                 
                 EncryptManager.getIns().getDigitalSIgnature().receivedIdentification(receivedUsername, pk);
-                String message = in.readUTF();
+                String messageToVerif = in.readUTF();
                 byte[] signature = (byte[]) in.readObject();
                 
-                boolean validated = EncryptManager.getIns().getDigitalSIgnature().verifySignature(receivedUsername, message, signature);
+                boolean validated = EncryptManager.getIns().getDigitalSIgnature().verifySignature(receivedUsername, messageToVerif, signature);
                 if (!validated) {
                     Client.ins.showError("Recebido segredo com assinatura inválida.");
-                } else {
-                    
-                    //Client.ins.showSecret(receivedUsername,"\n Mensagem : "+ mensagem);
-                    if(et == EncryptType.RSA){
-                        Client.ins.showSecret(receivedUsername, "Type= "+ et.toString() + "\nCriptograma : " + criptograma.toString() + "\nMensagem : " + mensagem);
-                    }else{
-                        Client.ins.showSecret(receivedUsername, mensagem);
-                    }
-                    
+                    return;
                 }
+                
+                    
+                if (et == EncryptType.RSA) {
+                    Client.ins.showSecret(receivedUsername, "Type= "+ et.toString() + 
+                            "\nCriptograma= " + criptograma.toString() + 
+                            "\nMensagem= " + message);
+                } else if (et == EncryptType.DiffieHellman) {
+                    Client.ins.showSecret(receivedUsername, "Type= " + et.toString() +
+                            "\nP= " + P.toString() +
+                            "\nG= " + G.toString() +
+                            "\nK= " + K.toString() +
+                            "\nMensagem= " + message);
+                } else {
+                    Client.ins.showSecret(receivedUsername, "Type= " + et.toString() +
+                            "\nMensagem= " + message);
+                }
+                
             }
         
         } catch (ClassNotFoundException | NoSuchAlgorithmException | InvalidKeyException | SignatureException | IOException ex) {

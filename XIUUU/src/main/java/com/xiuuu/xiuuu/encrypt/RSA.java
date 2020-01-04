@@ -91,9 +91,4 @@ public class RSA {
 
         return new String(dectyptedText);
     }
-    /*
-    public static String decrypt(byte[] criptograma, String PRIVATE_KEY_FILE) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-    */
 }

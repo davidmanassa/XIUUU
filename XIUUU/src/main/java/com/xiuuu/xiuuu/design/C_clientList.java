@@ -28,9 +28,9 @@ public class C_clientList extends JFrame {
         this.clp = new clientListPanel();
         
         if (Main.getIns().isServer())
-            this.setTitle("XIUUU - " + Main.getIns().getPort());
+            this.setTitle("XIUUU Server - " + Main.getIns().getPort());
         else
-            this.setTitle("XIUUU - " + Main.getIns().getPort() + " - " + Main.getIns().getClient().getUsername());
+            this.setTitle("XIUUU Client - " + Main.getIns().getPort() + " - " + Main.getIns().getClient().getUsername());
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         JFrameUtils.setWindowPosition(this, 0);
         this.setMinimumSize(new Dimension(500, 500));
@@ -55,11 +55,15 @@ public class C_clientList extends JFrame {
         JPanel panel = new JPanel();
         panel.setName(username);
         panel.setLayout(new BorderLayout());
-        //ImageIcon ic = new ImageIcon(getClass().getClassLoader().getResource("avatar.png"));
-        //Image aux = ic.getImage();
-        //JLabel imgLabel = new JLabel();
-        //imgLabel.setIcon(new ImageIcon(aux));
-        //panel.add(imgLabel, BorderLayout.WEST);
+        try {
+            ImageIcon ic = new ImageIcon(new C_clientList().getClass().getClassLoader().getResource(image));
+            Image aux = ic.getImage();
+            JLabel imgLabel = new JLabel();
+            imgLabel.setIcon(new ImageIcon(aux));
+            panel.add(imgLabel, BorderLayout.WEST);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         JLabel usernameLabel = new JLabel();
         usernameLabel.setText(username);
         usernameLabel.setFont(new java.awt.Font("Courier New", 0, 18));

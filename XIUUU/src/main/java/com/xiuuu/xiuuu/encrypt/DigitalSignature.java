@@ -34,12 +34,11 @@ public class DigitalSignature {
         return myPk;
     }
     
-    // author%pk
-    
     public void receivedIdentification(String author, PublicKey pk) {
         publicKeys.put(author, pk);
     }
     
+    // author%pk
     public void receivedIdentification(String received) throws NoSuchAlgorithmException, InvalidKeySpecException {
         byte[] data = Base64.getDecoder().decode((received.split("%")[1].getBytes()));
         X509EncodedKeySpec spec = new X509EncodedKeySpec(data);
