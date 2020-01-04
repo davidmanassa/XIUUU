@@ -30,11 +30,16 @@ public class DigitalSignature {
         this.publicKeys = new HashMap<>();
     }
     
-    public String getMyPk(String nickname) throws NoSuchAlgorithmException {
-        return (nickname + "%" + Base64.getEncoder().encodeToString(myPk.getEncoded()));
+    public PublicKey getMyPk() {
+        return myPk;
     }
     
     // author%pk
+    
+    public void receivedIdentification(String author, PublicKey pk) {
+        publicKeys.put(author, pk);
+    }
+    
     public void receivedIdentification(String received) throws NoSuchAlgorithmException, InvalidKeySpecException {
         byte[] data = Base64.getDecoder().decode((received.split("%")[1].getBytes()));
         X509EncodedKeySpec spec = new X509EncodedKeySpec(data);
@@ -42,21 +47,23 @@ public class DigitalSignature {
         publicKeys.put(received.split("%")[0], fact.generatePublic(spec));
     }
     
-    public boolean verifySignature(String author, String message, String signature) throws NoSuchAlgorithmException, InvalidKeyException, SignatureException {
+    public boolean verifySignature(String author, String message, byte[] signature) throws NoSuchAlgorithmException, InvalidKeyException, SignatureException {
         Signature sign = Signature.getInstance("SHA256withRSA");
         sign.initVerify(publicKeys.get(author));
         byte[] bytes = message.getBytes();
         sign.update(bytes);
-        return sign.verify(Base64.getDecoder().decode(signature));
+        return sign.verify(signature);
     }
     
-    public String getSignedMessage(String message) throws NoSuchAlgorithmException, InvalidKeyException, SignatureException {
+    // message%signature
+    public byte[] getSignature(String message) throws NoSuchAlgorithmException, InvalidKeyException, SignatureException {
         Signature sign = Signature.getInstance("SHA256withRSA");
         sign.initSign(mySk);
         byte[] bytes = message.getBytes();
         sign.update(bytes);
         byte[] signature = sign.sign();
-        return ( message + "%" + Base64.getEncoder().encodeToString(signature) );
+        return signature;
+        //return ( message + "%" + Base64.getEncoder().encodeToString(signature) );
     }
     
     /**

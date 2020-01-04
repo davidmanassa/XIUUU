@@ -14,7 +14,7 @@ public class ClientService extends Thread {
             
             try {
                 
-                Main.getIns().getClient().send("getUserList");
+                Main.getIns().getClient().sendString("getUserList");
                 
                 this.sleep(2000);
                 

@@ -4,9 +4,7 @@ import java.math.BigInteger;
 import java.util.Random;
 
 public class DiffieHellman {
-    
-    
-    
+
     
     private BigInteger generateRandomPrimeNumber() {
         BigInteger bi = BigInteger.probablePrime(1024, new Random());
@@ -35,6 +33,5 @@ public class DiffieHellman {
         }
         return true;
     }
-    
-    
+        
 }

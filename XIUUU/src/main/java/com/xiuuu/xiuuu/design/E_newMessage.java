@@ -118,7 +118,7 @@ public class E_newMessage extends javax.swing.JFrame {
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         
         try {
-            Main.getIns().getClient().sendSecret(this.to, this.textInput_Secret.getText());
+            Main.getIns().getClient().sendSecret(this.to, this.textInput_Secret.getText(), et);
         } catch (IOException ex) {
             Logger.getLogger(E_newMessage.class.getName()).log(Level.SEVERE, null, ex);
         }

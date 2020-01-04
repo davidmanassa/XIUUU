@@ -8,6 +8,8 @@ import java.util.logging.Logger;
 
 public class EncryptManager {
 
+    static EncryptManager instance;
+    
     private EncryptType lastUsed;
     
     private HashMap<Client, EncryptType> using;
@@ -15,6 +17,7 @@ public class EncryptManager {
     public DigitalSignature digitalSignature;
     
     public EncryptManager() {
+        instance = this;
         this.lastUsed = null;
         this.using = new HashMap<>();
         try {
@@ -22,6 +25,14 @@ public class EncryptManager {
         } catch (NoSuchAlgorithmException ex) {
             Logger.getLogger(EncryptManager.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+    
+    public static EncryptManager getIns() {
+        return instance;
+    }
+    
+    public DigitalSignature getDigitalSIgnature() {
+        return digitalSignature;
     }
     
     public EncryptType getLastUsed() {
