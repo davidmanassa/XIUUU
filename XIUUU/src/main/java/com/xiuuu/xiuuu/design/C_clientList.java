@@ -55,11 +55,11 @@ public class C_clientList extends JFrame {
         JPanel panel = new JPanel();
         panel.setName(username);
         panel.setLayout(new BorderLayout());
-        ImageIcon ic = new ImageIcon(getClass().getClassLoader().getResource("avatar.png"));
-        Image aux = ic.getImage();
-        JLabel imgLabel = new JLabel();
-        imgLabel.setIcon(new ImageIcon(aux));
-        panel.add(imgLabel, BorderLayout.WEST);
+        //ImageIcon ic = new ImageIcon(getClass().getClassLoader().getResource("avatar.png"));
+        //Image aux = ic.getImage();
+        //JLabel imgLabel = new JLabel();
+        //imgLabel.setIcon(new ImageIcon(aux));
+        //panel.add(imgLabel, BorderLayout.WEST);
         JLabel usernameLabel = new JLabel();
         usernameLabel.setText(username);
         usernameLabel.setFont(new java.awt.Font("Courier New", 0, 18));

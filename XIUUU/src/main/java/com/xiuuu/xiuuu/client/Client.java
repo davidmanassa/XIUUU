@@ -3,7 +3,9 @@ package com.xiuuu.xiuuu.client;
 import com.xiuuu.xiuuu.design.Z_messageReceived;
 import com.xiuuu.xiuuu.encrypt.EncryptManager;
 import com.xiuuu.xiuuu.encrypt.EncryptType;
+import com.xiuuu.xiuuu.encrypt.RSA;
 import com.xiuuu.xiuuu.main.Main;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -13,9 +15,12 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.SignatureException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -111,6 +116,13 @@ public class Client extends Thread {
                 
                 // send G and P ...
                 
+            }else if (et == EncryptType.RSA){
+              ObjectInputStream inputStream = new ObjectInputStream(new FileInputStream((String) in.readObject()));
+              
+                byte[] criptograma = RSA.encrypt(message,(PublicKey) inputStream.readObject());
+                out.writeObject(criptograma);
+                out.flush();
+                
             }
             
             // Digital Signature
@@ -144,6 +156,8 @@ public class Client extends Thread {
         } catch (UnknownHostException ex) {
             Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
+            Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ClassNotFoundException ex) {
             Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
         }
         return null;
@@ -209,10 +223,22 @@ class ReceivingSecrets extends Thread {
                 
                 EncryptType et = (EncryptType) in.readObject();
                 
+                String mensagem= "";
+                byte[] criptograma = null;
+                
                 if (et == EncryptType.DiffieHellman) {
                     
                 } else if (et == EncryptType.MerklePuzzle) {
                     
+                } else if (et == EncryptType.RSA) {
+                    RSA.generateKey();
+                    out.writeObject(RSA.PUBLIC_KEY_FILE);
+                    out.flush();
+                    
+                    criptograma = (byte[]) in.readObject();
+                    ObjectInputStream inputStream = new ObjectInputStream(new FileInputStream(RSA.PRIVATE_KEY_FILE));
+                    PrivateKey privatekey = (PrivateKey) inputStream.readObject();
+                    mensagem = RSA.decrypt(criptograma,privatekey);
                 } //...
                 
                 // Digital Signature
@@ -228,7 +254,13 @@ class ReceivingSecrets extends Thread {
                 if (!validated) {
                     Client.ins.showError("Recebido segredo com assinatura inválida.");
                 } else {
-                    Client.ins.showSecret(receivedUsername, message);
+                    
+                    //Client.ins.showSecret(receivedUsername,"\n Mensagem : "+ mensagem);
+                    if(et == EncryptType.RSA){
+                    Client.ins.showSecret(receivedUsername,"Type= "+et.toString()+"\nCriptograma : "+criptograma.toString()+"\nMensagem : "+ mensagem);
+                    }else{
+                    Client.ins.showSecret(receivedUsername,mensagem);
+                    }
                 }
             }
         
