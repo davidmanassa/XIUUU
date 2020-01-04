@@ -12,8 +12,8 @@ public class B_insertClientData extends javax.swing.JFrame {
     public B_insertClientData(int port) {
         this.port = port;
         initComponents();
-        JFrameUtils.setWindowPosition(this, 0);
         this.setMinimumSize(new Dimension(500, 200));
+        JFrameUtils.setWindowPosition(this, 0);
     }
 
     

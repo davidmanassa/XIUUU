@@ -8,8 +8,8 @@ public class A_modeSelect extends javax.swing.JFrame {
     public A_modeSelect() {
         initComponents();
         this.setTitle("XIUUU");
-        JFrameUtils.setWindowPosition(this, 0);
         this.setMinimumSize(new Dimension(500, 200));
+        JFrameUtils.setWindowPosition(this, 0);
     }
 
     @SuppressWarnings("unchecked")

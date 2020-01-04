@@ -48,10 +48,6 @@ public class Main {
         return this.em;
     }
     
-    public void sets() {
-        em = new EncryptManager();
-    }
-    
     public C_clientList getC_clientList() {
         if (this.cl == null)
             cl = new C_clientList();
@@ -70,49 +66,15 @@ public class Main {
             cl.update(connecteds);
     }
     
-    public static void main(String[] args) throws IOException {
-        
-        main = new Main();
-        getIns().sets();
+    public Main() {
+        this.main = this;
+        em = new EncryptManager();
         
         new A_modeSelect().setVisible(true);
-        
-        
-        
-        /**
-        System.out.println("Digite 'server %port%' para iniciar como servidor ou 'client %port%' para iniciar como cliente.");
-        
-        Scanner scn = new Scanner(System.in);
-        * ola
-        
-        while(true) {
-        
-            String input = scn.nextLine();
-
-            if (input.startsWith("server ")) {
-
-                int port = Integer.parseInt(input.split(" ")[1]);
-                System.out.println("Iniciando como servidor (Porta: " + port + ")...\n");
-                server = new Server(port);
-                server.startServer();
-                break;
-
-            } else if (input.startsWith("client ")) {
-
-                int port = Integer.parseInt(input.split(" ")[1]);
-                System.out.println("Iniciando como cliente (Porta: " + port + ")...\n");
-                client = new Client(port);
-                client.startClient();
-                break;
-
-            } else {
-
-                System.out.println("Input inválido.\n");
-
-            }
-        
-        }**/
-        
+    }
+    
+    public static void main(String[] args) throws IOException {
+        new Main();  
     }
     
 }
