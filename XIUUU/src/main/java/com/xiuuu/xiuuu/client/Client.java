@@ -2,9 +2,11 @@ package com.xiuuu.xiuuu.client;
 
 import com.xiuuu.xiuuu.design.Z_messageReceived;
 import com.xiuuu.xiuuu.encrypt.AES;
+import com.xiuuu.xiuuu.encrypt.DES;
 import com.xiuuu.xiuuu.encrypt.DiffieHellman;
 import com.xiuuu.xiuuu.encrypt.EncryptManager;
 import com.xiuuu.xiuuu.encrypt.EncryptType;
+import com.xiuuu.xiuuu.encrypt.MerklePuzzle;
 import com.xiuuu.xiuuu.encrypt.PBKDF2;
 import com.xiuuu.xiuuu.encrypt.RSA;
 import com.xiuuu.xiuuu.main.Main;
@@ -17,6 +19,7 @@ import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.nio.charset.Charset;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
@@ -24,9 +27,13 @@ import java.security.PublicKey;
 import java.security.SecureRandom;
 import java.security.SignatureException;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
 
 public class Client extends Thread {
     
@@ -97,10 +104,10 @@ public class Client extends Thread {
     }
     
     public String sendSecret(String username, String message, EncryptType et) {
-        return sendSecret(username, message, et, "", 0);
+        return sendSecret(username, message, et, "");
     }
     
-    public String sendSecret(String username, String message, EncryptType et, String PBKDF2pass, int PBKDF2option) {
+    public String sendSecret(String username, String message, EncryptType et, String MerkleCipher) {
         
         try {
             
@@ -164,12 +171,51 @@ public class Client extends Thread {
                 
             } else if (et == EncryptType.MerklePuzzle) {
                 
-            } else if (et == EncryptType.PBKDF2) {
+                MerklePuzzle mp = new MerklePuzzle();
+                int totalPuzzles = 10000;
+                int keyLen = 4;
                 
-                PBKDF2 pbkdf2 = new PBKDF2(PBKDF2pass, PBKDF2option);
-                String criptograma = pbkdf2.encrypt(message);
+                ArrayList<byte[]> puzzles = new ArrayList<>();
+                ArrayList<String> keys = new ArrayList<>();
+                for (int i = 0; i < totalPuzzles; i++) {
+                    String aux = mp.random_string(16);
+                    keys.add(i, aux);
+                    byte[] cipherText = mp.encrypt(mp.random_key(keyLen), (aux + "PUZZLE" + i));
+                    puzzles.add(cipherText);
+                }
                 
-                out.writeObject(criptograma);
+                Collections.shuffle(puzzles);
+                
+                out.writeObject(puzzles);
+                out.flush();
+                out.writeObject(MerkleCipher);
+                out.flush();
+                out.writeInt(keyLen);
+                out.flush();
+                
+                String chosen = (String) in.readObject();
+                
+                String keyChosen = keys.get(Integer.parseInt(chosen)); // chave simétrica
+                byte[] encriptedMessage = null;
+                
+                if (MerkleCipher.equalsIgnoreCase("AES-ECB")) {
+                    
+                    byte[] encodedKey = keyChosen.getBytes();
+                    SecretKey sk = new SecretKeySpec(encodedKey, 0, encodedKey.length, "AES");
+                
+                    encriptedMessage = AES.encrypt(message, sk);
+                    
+                } else {
+                    
+                    String keyZ = keyChosen + keyChosen;
+                    byte[] temp = keyZ.getBytes(Charset.forName("UTF-8"));
+                    SecretKey sk = new SecretKeySpec(temp, 0, 8, "DES");
+                    
+                    encriptedMessage = DES.encrypt(message, sk);
+                    
+                }
+                
+                out.writeObject(encriptedMessage);
                 
             }
             
@@ -263,7 +309,10 @@ class ReceivingSecrets extends Thread {
                 
                 String message = "";
                 byte[] criptograma = null;
+                
                 BigInteger P = null, G = null, X, y, Y, K = null;
+                
+                String cipherMode = null;
                 
                 if (et == EncryptType.DiffieHellman) {
                     
@@ -284,6 +333,45 @@ class ReceivingSecrets extends Thread {
                     
                 } else if (et == EncryptType.MerklePuzzle) {
                     
+                    MerklePuzzle mp = new MerklePuzzle();
+                    
+                    ArrayList<byte[]> puzzles = (ArrayList) in.readObject();
+                    cipherMode = (String) in.readObject();
+                    int keyLen = in.readInt();
+                    
+                    int chosen = new SecureRandom().nextInt(puzzles.size());
+                    String tempKey = "";
+                    boolean solved = false;
+                    while(!solved) {
+                        tempKey = mp.decrypt(mp.random_key(keyLen), puzzles.get(chosen));
+                        
+                        if (tempKey != null && tempKey.contains("PUZZLE"))
+                            solved = true;
+                    }
+                    
+                    System.out.println("TotalPuzzles= " + puzzles.size());
+                    System.out.println("Key= " + tempKey.substring(0, 16) + "\nPuzzle= " + tempKey.substring(22));
+                    
+                    String key = tempKey.substring(0, 16);
+           
+                    out.writeObject(tempKey.substring(22));
+                    out.flush();
+                    
+                    byte[] encodedKey = key.getBytes();
+                    
+                    byte[] criptogram = (byte[]) in.readObject();
+                    
+                    if (cipherMode.equalsIgnoreCase("AES-ECB")) {
+                        SecretKey sk = new SecretKeySpec(encodedKey, 0, encodedKey.length, "AES");
+                        message = AES.decrypt(criptogram, sk);
+                    } else {
+                        String keyZ = key + key;
+                        byte[] temp = keyZ.getBytes(Charset.forName("UTF-8"));
+                        SecretKey sk = new SecretKeySpec(temp, 0, 8, "DES");
+                        
+                        message = DES.decrypt(criptogram, sk);
+                    }
+                    
                 } else if (et == EncryptType.RSA) {
                     RSA.generateKey();
                     out.writeObject(RSA.PUBLIC_KEY_FILE);
@@ -293,14 +381,6 @@ class ReceivingSecrets extends Thread {
                     ObjectInputStream inputStream = new ObjectInputStream(new FileInputStream(RSA.PRIVATE_KEY_FILE));
                     PrivateKey privatekey = (PrivateKey) inputStream.readObject();
                     message = RSA.decrypt(criptograma,privatekey);
-                    
-                } else if (et == EncryptType.PBKDF2) {
-                    
-                    String cript = (String) in.readObject();
-                    
-                    // FALTA DESENCRIPTAR
-                    
-                    message = cript;
                     
                 }
                 
@@ -330,6 +410,10 @@ class ReceivingSecrets extends Thread {
                             "\nG= " + G.toString() +
                             "\nK= " + K.toString() +
                             "\nMensagem= " + message);
+                } else if (et == EncryptType.MerklePuzzle) {
+                    Client.ins.showSecret(receivedUsername, "Type= " + et.toString() +
+                            "\nCipherMode= " + cipherMode +
+                            "\nMensagem= " + message);
                 } else {
                     Client.ins.showSecret(receivedUsername, "Type= " + et.toString() +
                             "\nMensagem= " + message);
@@ -338,6 +422,8 @@ class ReceivingSecrets extends Thread {
             }
         
         } catch (ClassNotFoundException | NoSuchAlgorithmException | InvalidKeyException | SignatureException | IOException ex) {
+            Logger.getLogger(ReceivingSecrets.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (Exception ex) {
             Logger.getLogger(ReceivingSecrets.class.getName()).log(Level.SEVERE, null, ex);
         }
     }

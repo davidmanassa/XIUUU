@@ -6,6 +6,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.Base64;
 import javax.crypto.Cipher;
+import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
 public class AES {
@@ -48,6 +49,20 @@ public class AES {
             System.out.println("Error while decrypting: " + e.toString());
         }
         return null;
+    }
+    
+    public static byte[] encrypt(String plainText, SecretKey secKey) throws Exception {
+        Cipher aesCipher = Cipher.getInstance("AES");
+        aesCipher.init(Cipher.ENCRYPT_MODE, secKey);
+        byte[] byteCipherText = aesCipher.doFinal(plainText.getBytes());
+        return byteCipherText;
+    }
+
+    public static String decrypt(byte[] byteCipherText, SecretKey secKey) throws Exception {
+        Cipher aesCipher = Cipher.getInstance("AES");
+        aesCipher.init(Cipher.DECRYPT_MODE, secKey);
+        byte[] bytePlainText = aesCipher.doFinal(byteCipherText);
+        return new String(bytePlainText);
     }
     
 }

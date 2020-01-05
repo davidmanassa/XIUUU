@@ -36,20 +36,11 @@ public class B_ipPortSelect extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jButton1 = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
         textInput_IP = new javax.swing.JTextField();
         text_IP = new javax.swing.JLabel();
         textInput_PORT = new javax.swing.JTextField();
         button_start = new javax.swing.JButton();
-
-        jButton1.setFont(new java.awt.Font("Courier New", 0, 18)); // NOI18N
-        jButton1.setText("Servidor");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
-            }
-        });
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -62,28 +53,11 @@ public class B_ipPortSelect extends javax.swing.JFrame {
                 textInput_IPMouseClicked(evt);
             }
         });
-        textInput_IP.addInputMethodListener(new java.awt.event.InputMethodListener() {
-            public void caretPositionChanged(java.awt.event.InputMethodEvent evt) {
-            }
-            public void inputMethodTextChanged(java.awt.event.InputMethodEvent evt) {
-                textInput_IPInputMethodTextChanged(evt);
-            }
-        });
-        textInput_IP.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                textInput_IPActionPerformed(evt);
-            }
-        });
 
         text_IP.setFont(new java.awt.Font("Courier New", 1, 18)); // NOI18N
         text_IP.setText(" IP");
 
         textInput_PORT.setText("65000");
-        textInput_PORT.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                textInput_PORTActionPerformed(evt);
-            }
-        });
 
         button_start.setFont(new java.awt.Font("Courier New", 0, 18)); // NOI18N
         button_start.setText("Iniciar");
@@ -129,15 +103,6 @@ public class B_ipPortSelect extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
-    private void textInput_IPActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_textInput_IPActionPerformed
-    }//GEN-LAST:event_textInput_IPActionPerformed
-
-    private void textInput_PORTActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_textInput_PORTActionPerformed
-    }//GEN-LAST:event_textInput_PORTActionPerformed
-
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-    }//GEN-LAST:event_jButton1ActionPerformed
 
     private void button_startActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button_startActionPerformed
         
@@ -187,13 +152,8 @@ public class B_ipPortSelect extends javax.swing.JFrame {
                 JOptionPane.ERROR_MESSAGE);
     }//GEN-LAST:event_textInput_IPMouseClicked
 
-    private void textInput_IPInputMethodTextChanged(java.awt.event.InputMethodEvent evt) {//GEN-FIRST:event_textInput_IPInputMethodTextChanged
-
-    }//GEN-LAST:event_textInput_IPInputMethodTextChanged
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton button_start;
-    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JTextField textInput_IP;
     private javax.swing.JTextField textInput_PORT;

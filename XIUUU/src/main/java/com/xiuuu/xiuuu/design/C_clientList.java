@@ -45,9 +45,14 @@ public class C_clientList extends JFrame {
     }
     
     public void update(ArrayList<String> connecteds) {
-        clp.removeAll();
+        ArrayList<JPanel> toAdd = new ArrayList<>();
         for (String c : connecteds) {
-            clp.addPanel(getUserPanel(c, "avatar.png"), 2);
+            toAdd.add(getUserPanel(c, "avatar.png"));
+        }
+        clp.removeAll();
+        clp.addPanel(getUserPanel("Gerar segredo apartir de PBKDF2", "none"), 2);
+        for (JPanel jp : toAdd) {
+            clp.addPanel(jp, 2);
         }
     }
     
@@ -55,21 +60,41 @@ public class C_clientList extends JFrame {
         JPanel panel = new JPanel();
         panel.setName(username);
         panel.setLayout(new BorderLayout());
-        try {
-            ImageIcon ic = new ImageIcon(new C_clientList().getClass().getClassLoader().getResource(image));
-            Image aux = ic.getImage();
-            JLabel imgLabel = new JLabel();
-            imgLabel.setIcon(new ImageIcon(aux));
-            panel.add(imgLabel, BorderLayout.WEST);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        if (!image.equalsIgnoreCase("none"))
+            try {
+                ImageIcon ic = new ImageIcon(new C_clientList().getClass().getClassLoader().getResource(image));
+                Image aux = ic.getImage();
+                JLabel imgLabel = new JLabel();
+                imgLabel.setIcon(new ImageIcon(aux));
+                panel.add(imgLabel, BorderLayout.WEST);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         JLabel usernameLabel = new JLabel();
         usernameLabel.setText(username);
         usernameLabel.setFont(new java.awt.Font("Courier New", 0, 18));
         panel.add(usernameLabel);
         panel.setBackground(Color.white);
-        if (!Main.getIns().isServer()) {
+        if (username.contains("Gerar segredo apartir de PBKDF2")) {
+            panel.setBackground(Color.yellow);
+            panel.addMouseListener(new MouseAdapter() {
+                    private Color background;
+
+                    @Override
+                    public void mousePressed(MouseEvent e) {
+                        background = getBackground();
+                        panel.setBackground(Color.red);
+                        repaint();
+                        new D_PBKDF2().setVisible(true);
+                    }
+
+                    @Override
+                    public void mouseReleased(MouseEvent e) {
+                        panel.setBackground(background);
+                    }
+
+                });
+        } else if (!Main.getIns().isServer()) {
             if (username.equalsIgnoreCase(Main.getIns().getClient().getUsername()))
                 panel.setBackground(Color.gray);
             else

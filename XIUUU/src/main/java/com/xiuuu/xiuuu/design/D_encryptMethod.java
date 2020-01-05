@@ -42,6 +42,8 @@ public class D_encryptMethod extends javax.swing.JFrame {
         for (EncryptType et : EncryptType.values()) {
             if (et == EncryptType.None)
                 continue;
+            if (et == EncryptType.PBKDF2)
+                continue;
             JRadioButton j1 = new JRadioButton(et.name());
             j1.addActionListener(new ActionListener() {
                 @Override
@@ -71,8 +73,8 @@ public class D_encryptMethod extends javax.swing.JFrame {
                             if (et1.name().equalsIgnoreCase(b.getText())) {
                                 Main.getIns().getEncryptManager().setLastUsed(et1);
                                 dispose();
-                                if (et1 == EncryptType.PBKDF2)
-                                    new E_PBKDF2(to).setVisible(true);
+                                if (et1 == EncryptType.MerklePuzzle)
+                                    new E_newMessageMerkle(to).setVisible(true);
                                 else
                                     new E_newMessage(to).setVisible(true);
                             }

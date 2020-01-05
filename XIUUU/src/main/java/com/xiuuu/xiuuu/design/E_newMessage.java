@@ -43,25 +43,7 @@ public class E_newMessage extends javax.swing.JFrame {
         text.setFont(new java.awt.Font("Courier New", 1, 18)); // NOI18N
         text.setText(" Insira o segredo:");
 
-        textInput_Secret.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                textInput_SecretMouseClicked(evt);
-            }
-        });
-        textInput_Secret.addInputMethodListener(new java.awt.event.InputMethodListener() {
-            public void caretPositionChanged(java.awt.event.InputMethodEvent evt) {
-            }
-            public void inputMethodTextChanged(java.awt.event.InputMethodEvent evt) {
-                textInput_SecretInputMethodTextChanged(evt);
-            }
-        });
-        textInput_Secret.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                textInput_SecretActionPerformed(evt);
-            }
-        });
-
-        jButton1.setFont(new java.awt.Font("Courier 10 Pitch", 0, 18)); // NOI18N
+        jButton1.setFont(new java.awt.Font("Courier New", 0, 18)); // NOI18N
         jButton1.setText("Enviar para %username%");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -88,29 +70,17 @@ public class E_newMessage extends javax.swing.JFrame {
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
+                .addGap(12, 12, 12)
                 .addComponent(text)
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(textInput_Secret, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 17, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jButton1)
-                .addContainerGap())
+                .addContainerGap(14, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
-    private void textInput_SecretMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_textInput_SecretMouseClicked
-     
-    }//GEN-LAST:event_textInput_SecretMouseClicked
-
-    private void textInput_SecretInputMethodTextChanged(java.awt.event.InputMethodEvent evt) {//GEN-FIRST:event_textInput_SecretInputMethodTextChanged
-
-    }//GEN-LAST:event_textInput_SecretInputMethodTextChanged
-
-    private void textInput_SecretActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_textInput_SecretActionPerformed
-
-    }//GEN-LAST:event_textInput_SecretActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
              
