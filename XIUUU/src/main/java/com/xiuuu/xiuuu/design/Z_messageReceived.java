@@ -13,7 +13,7 @@ public class Z_messageReceived extends javax.swing.JFrame {
     public Z_messageReceived(String author, String message) {
         initComponents();
         
-        this.setTitle("XIUUU");
+        this.setTitle("XIUUU - Segredo recebido");
         setDefaultCloseOperation(HIDE_ON_CLOSE);
         JFrameUtils.setWindowPosition(this, 0);
         this.setMinimumSize(new Dimension(500, 200));
@@ -21,7 +21,9 @@ public class Z_messageReceived extends javax.swing.JFrame {
         setLayout(new GridLayout(0, 1));
         
         JLabel title = new JLabel();
-        title.setText("Nova mensagem de " + author + ":");
+        title.setText("Novo segredo de " + author + ":");
+        if (author.equalsIgnoreCase("ERROR"))
+            title.setText("ERRO AO RECEBER SEGREDO");
         title.setFont(new Font("Courier New", 1, 18));
         JTextArea jta = new JTextArea(message);
         jta.setFont(new Font("Courier New", 0, 18));

@@ -6,6 +6,7 @@ public enum EncryptType {
     PBKDF2,
     DiffieHellman,
     MerklePuzzle,
+    PreDistributedKey,
     None;
     
 }

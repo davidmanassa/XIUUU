@@ -50,7 +50,7 @@ public class C_clientList extends JFrame {
             toAdd.add(getUserPanel(c, "avatar.png"));
         }
         clp.removeAll();
-        clp.addPanel(getUserPanel("Gerar segredo apartir de PBKDF2", "none"), 2);
+        clp.addPanel(getUserPanel("Gerar segredo apartir de PBKDF2", "key.png"), 2);
         for (JPanel jp : toAdd) {
             clp.addPanel(jp, 2);
         }

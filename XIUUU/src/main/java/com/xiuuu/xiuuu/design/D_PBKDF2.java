@@ -1,8 +1,6 @@
 package com.xiuuu.xiuuu.design;
 
-import com.xiuuu.xiuuu.encrypt.EncryptType;
 import com.xiuuu.xiuuu.encrypt.PBKDF2;
-import com.xiuuu.xiuuu.main.Main;
 import com.xiuuu.xiuuu.util.JFrameUtils;
 import java.awt.Dimension;
 import java.util.logging.Level;

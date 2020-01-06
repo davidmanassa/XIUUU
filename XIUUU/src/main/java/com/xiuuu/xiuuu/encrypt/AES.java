@@ -1,11 +1,16 @@
 package com.xiuuu.xiuuu.encrypt;
 
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
+import java.security.InvalidKeyException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.Base64;
+import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
@@ -42,7 +47,7 @@ public class AES {
     public static String decrypt(String strToDecrypt, String secret) {
         try {
             setKey(secret);
-            Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5PADDING");
+            Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
             cipher.init(Cipher.DECRYPT_MODE, secretKey);
             return new String(cipher.doFinal(Base64.getDecoder().decode(strToDecrypt)));
         } catch (Exception e) {
@@ -51,14 +56,14 @@ public class AES {
         return null;
     }
     
-    public static byte[] encrypt(String plainText, SecretKey secKey) throws Exception {
+    public static byte[] encrypt(String plainText, SecretKey secKey) throws InvalidKeyException, NoSuchAlgorithmException, IllegalBlockSizeException, BadPaddingException, NoSuchPaddingException {
         Cipher aesCipher = Cipher.getInstance("AES");
         aesCipher.init(Cipher.ENCRYPT_MODE, secKey);
-        byte[] byteCipherText = aesCipher.doFinal(plainText.getBytes());
+        byte[] byteCipherText = aesCipher.doFinal(plainText.getBytes(Charset.forName("UTF-8")));
         return byteCipherText;
     }
 
-    public static String decrypt(byte[] byteCipherText, SecretKey secKey) throws Exception {
+    public static String decrypt(byte[] byteCipherText, SecretKey secKey) throws NoSuchAlgorithmException, NoSuchPaddingException, IllegalBlockSizeException, BadPaddingException, InvalidKeyException {
         Cipher aesCipher = Cipher.getInstance("AES");
         aesCipher.init(Cipher.DECRYPT_MODE, secKey);
         byte[] bytePlainText = aesCipher.doFinal(byteCipherText);

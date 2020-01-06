@@ -13,11 +13,11 @@ seguintes funcionalidades base:
 - **DONE (Inês)** troca de um segredo criptográfico usando o protocolo de acordo de chaves DiffieHellman;
 - **DONE (Ana)** troca de um segredo criptográfico usando Puzzles de Merkle;
 - **DONE (Gabriel)** troca de um segredo criptográfico usando o Rivest, Shamir e Adleman (RSA);
-- distribuição de novas chaves de cifra a partir de chaves pré-distribuídas;
+- **DONE** distribuição de novas chaves de cifra a partir de chaves pré-distribuídas;
 - distribuição de novas chaves de cifra usando um agente de confiança (neste caso, a
 aplicação desenvolvida deve permitir que uma das instâncias possa ser configurada
 como agente de confiança);
-- **DONE (falta 1 detalhe) (David)** implementar forma de ter a certeza de que o segredo partilhado é o mesmo dos dois
+- **DONE (David)** implementar forma de ter a certeza de que o segredo partilhado é o mesmo dos dois
 lados.
 
 

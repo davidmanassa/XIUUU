@@ -4,14 +4,6 @@ import com.xiuuu.xiuuu.encrypt.EncryptType;
 import com.xiuuu.xiuuu.main.Main;
 import com.xiuuu.xiuuu.util.JFrameUtils;
 import java.awt.Dimension;
-import java.nio.charset.Charset;
-import java.security.InvalidKeyException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.crypto.SecretKey;
-import javax.crypto.spec.SecretKeySpec;
 import javax.swing.JOptionPane;
 import static javax.swing.WindowConstants.HIDE_ON_CLOSE;
 

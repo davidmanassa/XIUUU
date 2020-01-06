@@ -27,13 +27,14 @@ import java.security.PublicKey;
 import java.security.SecureRandom;
 import java.security.SignatureException;
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.Base64;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
+
 
 public class Client extends Thread {
     
@@ -45,13 +46,16 @@ public class Client extends Thread {
     private ObjectInputStream dis = null; 
     private ObjectOutputStream dos = null;
     
-    private HashMap<String, Integer> connectedUsers = null; 
+    private HashMap<String, Integer> connectedUsers = null;
+    
+    public String preDistributedKey;
     
     public Client(int port, String username) {
         ins = this;
         this.port = port;
         this.username = username;
         this.connectedUsers = new HashMap<>();
+        this.preDistributedKey = "thisIsAPreDistributedKey";
     }
     
     public void showError(String error) {
@@ -80,12 +84,12 @@ public class Client extends Thread {
                 i++;
             }
             Main.getIns().update(al);
-        } else if (text.startsWith("messageFrom%")) {
+        } /**else if (text.startsWith("messageFrom%")) {
             
             String author = text.split("%")[1], msg = text.split("%")[2];
             new Z_messageReceived(author, msg).setVisible(true);
             
-        }
+        }**/
         
         System.out.println(text + "\n");
     }
@@ -165,7 +169,7 @@ public class Client extends Thread {
                 
                 ObjectInputStream inputStream = new ObjectInputStream(new FileInputStream((String) in.readObject()));
               
-                byte[] criptograma = RSA.encrypt(message,(PublicKey) inputStream.readObject());
+                byte[] criptograma = RSA.encrypt(message, (PublicKey) inputStream.readObject());
                 out.writeObject(criptograma);
                 out.flush();
                 
@@ -216,6 +220,28 @@ public class Client extends Thread {
                 }
                 
                 out.writeObject(encriptedMessage);
+                out.flush();
+                
+            } else if (et == EncryptType.PreDistributedKey) {
+                
+                // generate new key
+                MerklePuzzle mp = new MerklePuzzle();
+                String randomKey = mp.random_string(20);
+                
+                byte[] decodedKey = Client.ins.preDistributedKey.getBytes();
+                SecretKey originalKey = new SecretKeySpec(decodedKey, 0, 16, "AES");
+
+                byte[] encryptedKey = AES.encrypt(randomKey, originalKey);
+
+                decodedKey = randomKey.getBytes();
+                originalKey = new SecretKeySpec(decodedKey, 0, 16, "AES");
+                byte[] encryptedMessage = AES.encrypt(message, originalKey);
+                
+     
+                out.writeObject(encryptedKey);
+                out.flush();
+                out.writeObject(encryptedMessage);
+                out.flush();
                 
             }
             
@@ -229,8 +255,8 @@ public class Client extends Thread {
            
             byte[] signedMessage = EncryptManager.getIns().getDigitalSIgnature().getSignature(message);
 
-            out.writeUTF(message);
-            out.flush();
+            //out.writeUTF(message);
+            //out.flush();
             out.writeObject(signedMessage);
             out.flush();
             
@@ -382,6 +408,22 @@ class ReceivingSecrets extends Thread {
                     PrivateKey privatekey = (PrivateKey) inputStream.readObject();
                     message = RSA.decrypt(criptograma,privatekey);
                     
+                } else if (et == EncryptType.PreDistributedKey) {
+                    
+                    byte[] encryptedKey = (byte[]) in.readObject();
+                    byte[] encryptedMessage = (byte[]) in.readObject();
+                    
+                    
+                    byte[] keyByte = Client.ins.preDistributedKey.getBytes();
+                    SecretKey originalKey = new SecretKeySpec(keyByte, 0, 16, "AES");
+
+                    String aux = AES.decrypt(encryptedKey, originalKey);
+
+                    keyByte = aux.getBytes();
+                    originalKey = new SecretKeySpec(keyByte, 0, 16, "AES");
+
+                    message = AES.decrypt(encryptedMessage, originalKey);
+                    
                 }
                 
                 // Digital Signature
@@ -390,12 +432,12 @@ class ReceivingSecrets extends Thread {
                 PublicKey pk = (PublicKey) in.readObject();
                 
                 EncryptManager.getIns().getDigitalSIgnature().receivedIdentification(receivedUsername, pk);
-                String messageToVerif = in.readUTF();
+                //String messageToVerif = in.readUTF();
                 byte[] signature = (byte[]) in.readObject();
                 
-                boolean validated = EncryptManager.getIns().getDigitalSIgnature().verifySignature(receivedUsername, messageToVerif, signature);
+                boolean validated = EncryptManager.getIns().getDigitalSIgnature().verifySignature(receivedUsername, message, signature);
                 if (!validated) {
-                    Client.ins.showError("Recebido segredo com assinatura inválida.");
+                    Client.ins.showError("Recebido segredo com assinatura inválida. (O segredo não corresponde ao enviado)");
                     return;
                 }
                 

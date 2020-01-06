@@ -4,6 +4,7 @@ import java.security.AlgorithmParameters;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.spec.KeySpec;
+import java.util.Base64;
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
 import javax.crypto.SecretKeyFactory;
@@ -57,8 +58,7 @@ public class PBKDF2 {
         AlgorithmParameters params = dcipher.getParameters();
         iv = params.getParameterSpec(IvParameterSpec.class).getIV();
         byte[] utf8EncryptedData = dcipher.doFinal(data.getBytes());
-        String base64EncryptedData;
-        base64EncryptedData = new sun.misc.BASE64Encoder().encodeBuffer(utf8EncryptedData);
+        String base64EncryptedData = Base64.getEncoder().encodeToString(utf8EncryptedData);
         return base64EncryptedData;
     }
     
