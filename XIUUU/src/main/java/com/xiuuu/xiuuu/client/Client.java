@@ -242,7 +242,7 @@ public class Client extends Thread {
             
             // Digital Signature
             PublicKey pk = EncryptManager.getIns().getDigitalSIgnature().getMyPk();
-            out.writeUTF(username);
+            out.writeUTF(this.getUsername());
             out.flush();
             out.writeObject(pk);
             out.flush();
