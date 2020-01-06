@@ -9,17 +9,17 @@ import java.util.ArrayList;
 
 class ClientHandler extends Thread { 
 	
-    final ObjectInputStream dis; 
-    final ObjectOutputStream dos; 
+    final ObjectInputStream in; 
+    final ObjectOutputStream out; 
     final Socket s; 
-    final String id_client;
+    final String username;
     final int port;
 
-    public ClientHandler(Socket s, ObjectInputStream dis, ObjectOutputStream dos, String clientName, int port) { 
+    public ClientHandler(Socket s, ObjectInputStream in, ObjectOutputStream out, String clientName, int port) { 
         this.s = s; 
-        this.dis = dis; 
-        this.dos = dos; 
-        this.id_client = clientName;
+        this.in = in; 
+        this.out = out; 
+        this.username = clientName;
         this.port = port;
     }
     
@@ -31,65 +31,55 @@ class ClientHandler extends Thread {
     public void run() {
         
         String received;
-        String toreturn;
-        
-        boolean first = true;
         
         while (true) {
             
             try {
-
-                /// Just a welcome message
-                if (first) { first = false;
-                    dos.writeUTF("Your ID = "+ String.valueOf(id_client) +"\n Type 'exit' to terminate connection."); 
-                }
                 
-                // receive the answer from client 
-                received = dis.readUTF(); 
+                received = in.readUTF(); 
 
-                if(received.equalsIgnoreCase("exit")) {
+                if (received.equalsIgnoreCase("exit")) {
                     System.out.println("Client " + this.s + " sends exit..."); 
-                    System.out.println("Closing this connection."); 
+                    System.out.println("Closing this connection.");
+                    
+                    Server.connect_list.remove(username);
+                    
+                    this.in.close();
+                    this.out.close();
                     this.s.close();
+                    
                     System.out.println("Connection closed."); 
                     break;
-                }
-
-                // write on output stream based on the
-                // answer from the client
-                
-                System.out.println(received);
-                
-                if (received.startsWith("tosend%")) {
+                } else if (received.startsWith("tosend%")) {
                     
                     String toID = received.split("%")[1];
                     String message = received.split("%")[2];
                     
-                    dos.writeUTF("Message send to " + toID + ": " + message);
-                    dos.flush();
-                    Server.connect_list.get(toID).dos.writeUTF("messageFrom%" + id_client + "%" + message);
-                    Server.connect_list.get(toID).dos.flush();
+                    out.writeUTF("Message send to " + toID + ": " + message);
+                    out.flush();
+                    Server.connect_list.get(toID).out.writeUTF("messageFrom%" + username + "%" + message);
+                    Server.connect_list.get(toID).out.flush();
                     
                 } else if (received.startsWith("getUserList")) {
                 
-                    StringBuilder out = new StringBuilder("userList");
+                    StringBuilder output = new StringBuilder("userList");
                     ArrayList<String> users = new ArrayList<>();
                     
                     for (String s : Server.connect_list.keySet()) {
-                        out.append("%").append(s);
-                        out.append("&").append(Server.connect_list.get(s).getPort());
+                        output.append("%").append(s);
+                        output.append("&").append(Server.connect_list.get(s).getPort());
                         users.add(s);
                     }
                     
-                    dos.writeUTF(out.toString());
-                    dos.flush();
+                    out.writeUTF(output.toString());
+                    out.flush();
                     
                     Main.getIns().getC_clientList().update(users);
                         
                 } else {
                     
-                    dos.writeUTF("Invalid input: " + received);
-                    dos.flush();
+                    out.writeUTF("Invalid input: " + received);
+                    out.flush();
                     
                 }
                 
@@ -100,8 +90,8 @@ class ClientHandler extends Thread {
 
         try {
             // closing resources 
-            this.dis.close(); 
-            this.dos.close(); 
+            this.in.close(); 
+            this.out.close(); 
         }catch(IOException e){ 
                 e.printStackTrace(); 
         }

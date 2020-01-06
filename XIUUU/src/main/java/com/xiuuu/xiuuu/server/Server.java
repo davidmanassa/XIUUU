@@ -45,7 +45,6 @@ public class Server extends Thread {
                 // socket object to receive incoming client requests 
                 s = ss.accept();
                 
-                
                 System.out.println("A new client (port = " + s.getPort()  + ") is connected : " + s);
                 
                 // obtaining input and out streams

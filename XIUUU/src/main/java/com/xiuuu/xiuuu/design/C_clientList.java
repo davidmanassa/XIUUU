@@ -11,8 +11,11 @@ import java.awt.Image;
 import java.awt.Insets;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.ImageIcon;
 
 import javax.swing.JFrame;
@@ -41,6 +44,21 @@ public class C_clientList extends JFrame {
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         scrollPane.setViewportView(clp);
         this.getContentPane().add(scrollPane, BorderLayout.CENTER);
+        
+        this.addWindowListener(new java.awt.event.WindowAdapter() {
+            @Override
+            public void windowClosing(java.awt.event.WindowEvent windowEvent) {
+            
+                if (!Main.getIns().isServer()) {
+                    try {
+                        Main.getIns().getClient().sendString("exit");
+                    } catch (IOException ex) {
+                        Logger.getLogger(C_clientList.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
+            
+            }
+        });
         
     }
     
@@ -176,8 +194,8 @@ class clientListPanel extends JPanel {
     
     @Override
     public void removeAll() {
-        for (int i = 0; i < panels.size(); i++)
-            removePanel(0);
+        for (int i = panels.size()-1; i >= 0; i--)
+            removePanel(i);
     }
 
     public void removePanel(JPanel p) {

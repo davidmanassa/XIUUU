@@ -84,12 +84,7 @@ public class Client extends Thread {
                 i++;
             }
             Main.getIns().update(al);
-        } /**else if (text.startsWith("messageFrom%")) {
-            
-            String author = text.split("%")[1], msg = text.split("%")[2];
-            new Z_messageReceived(author, msg).setVisible(true);
-            
-        }**/
+        }
         
         System.out.println(text + "\n");
     }
