@@ -137,10 +137,10 @@ public class Client extends Thread {
                 } while(!b);
                 System.out.println("Generated P: " + P.toString());
                 
-                G = DiffieHellman.findPrimeRoot(P);
+                G = DiffieHellman.nextRandomBigInteger(P);
                 System.out.println("Generated G: " + G.toString());
                 
-                x = DiffieHellman.findPrimeRoot(P);
+                x = DiffieHellman.nextRandomBigInteger(P);
                 System.out.println("Generated x: " + x.toString());
                 
                 X = G.modPow(x, P);  // X = G^x mod P
@@ -241,7 +241,6 @@ public class Client extends Thread {
             }
             
             // Digital Signature
-            
             PublicKey pk = EncryptManager.getIns().getDigitalSIgnature().getMyPk();
             out.writeUTF(username);
             out.flush();
@@ -250,8 +249,6 @@ public class Client extends Thread {
            
             byte[] signedMessage = EncryptManager.getIns().getDigitalSIgnature().getSignature(message);
 
-            //out.writeUTF(message);
-            //out.flush();
             out.writeObject(signedMessage);
             out.flush();
             
@@ -341,7 +338,7 @@ class ReceivingSecrets extends Thread {
                     G = (BigInteger) in.readObject();
                     X = (BigInteger) in.readObject();
 
-                    y = DiffieHellman.findPrimeRoot(P);
+                    y = DiffieHellman.nextRandomBigInteger(P);
                 
                     Y = G.modPow(y, P);  // X = g^x mod p
                     
@@ -427,30 +424,30 @@ class ReceivingSecrets extends Thread {
                 PublicKey pk = (PublicKey) in.readObject();
                 
                 EncryptManager.getIns().getDigitalSIgnature().receivedIdentification(receivedUsername, pk);
-                //String messageToVerif = in.readUTF();
                 byte[] signature = (byte[]) in.readObject();
                 
                 boolean validated = EncryptManager.getIns().getDigitalSIgnature().verifySignature(receivedUsername, message, signature);
                 if (!validated) {
-                    Client.ins.showError("Recebido segredo com assinatura inválida. (O segredo não corresponde ao enviado)");
+                    Client.ins.showError("Assinatura inválida. \nO segredo não corresponde ao enviado. \nSegredo recebido: " + message);
                     return;
                 }
                 
                     
                 if (et == EncryptType.RSA) {
                     Client.ins.showSecret(receivedUsername, "Type= "+ et.toString() + 
-                            "\nCriptograma= " + criptograma.toString() + 
-                            "\nMensagem= " + message);
+                            "\nMensagem= " + message +
+                            "\nCriptograma= " + Base64.getEncoder().encodeToString(criptograma));
                 } else if (et == EncryptType.DiffieHellman) {
                     Client.ins.showSecret(receivedUsername, "Type= " + et.toString() +
+                            "\nMensagem= " + message +
                             "\nP= " + P.toString() +
                             "\nG= " + G.toString() +
-                            "\nK= " + K.toString() +
-                            "\nMensagem= " + message);
+                            "\nK= " + K.toString());
                 } else if (et == EncryptType.MerklePuzzle) {
                     Client.ins.showSecret(receivedUsername, "Type= " + et.toString() +
-                            "\nCipherMode= " + cipherMode +
-                            "\nMensagem= " + message);
+                            "\nMensagem= " + message +
+                            "\nCipherMode= " + cipherMode);
+                            
                 } else {
                     Client.ins.showSecret(receivedUsername, "Type= " + et.toString() +
                             "\nMensagem= " + message);

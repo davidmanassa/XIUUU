@@ -7,6 +7,14 @@ import java.util.List;
 public class DiffieHellman {
     
     private static final SecureRandom rnd = new SecureRandom();
+    
+    public static BigInteger nextRandomBigInteger(BigInteger n) {
+        BigInteger result = new BigInteger(n.bitLength(), rnd);
+        while( result.compareTo(n) >= 0 ) {
+            result = new BigInteger(n.bitLength(), rnd);
+        }
+        return result;
+    }
 
     public static boolean miller_rabin_pass(BigInteger a, BigInteger n) {
         BigInteger n_minus_one = n.subtract(BigInteger.ONE);
