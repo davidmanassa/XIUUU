@@ -115,7 +115,7 @@ public class D_PBKDF2 extends javax.swing.JFrame {
                 
                 JOptionPane.showMessageDialog(this,
                     "Criptograma gerado: \n" + criptogram,
-                    "Error",
+                    "Info",
                 JOptionPane.INFORMATION_MESSAGE);
                 dispose();
                 
