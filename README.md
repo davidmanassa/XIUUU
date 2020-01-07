@@ -40,6 +40,6 @@ depois certificados digitais para cada um dos utilizadores do sistema);
 - implementar mecanismos de assinatura digital para verificação de integridade em trocas de chave efémeras usando o Diffie-Hellman;
 - **DONE** possibilitar a escolha de diferentes algoritmos de cifra para os Puzzles de Merkle;
 - **DONE** possibilitar a escolha de diferentes funções de hash para o PBKDF2;
-- ter um help bastante completo e ser de simples utilização.
+- **DONE** ter um help bastante completo e ser de simples utilização.
 
 Pensem numa forma de atacar o sistema (uma falha da sua implementação) e dediquemlhe uma secção no relatório. Notem que, para efeitos de avaliação e prototipagem, o sistema desenvolvido pode executar localmente todos os seus componentes/aplicações/-programas, desde que simule ou concretize a arquitetura sugerida (i.e., não precisa necessariamente executar em rede).
