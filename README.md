@@ -9,15 +9,15 @@ princípio, o sistema deve poder ser concretizado numa única aplicação que, d
 executada em dois computadores ou dispositivos distintos, permita a geração e troca de
 segredos entre ambas as instâncias. Entre outras a pensar, o sistema deve fornecer as
 seguintes funcionalidades base:
-- **DONE (Renato)** geração de um segredo criptográfico a partir de palavras-passe inseridas pelo utilizador, nomeadamente através de algoritmos como o Password Based Key Derivation Function 2 (PBKDF2);
-- **DONE (Inês)** troca de um segredo criptográfico usando o protocolo de acordo de chaves DiffieHellman;
-- **DONE (Ana)** troca de um segredo criptográfico usando Puzzles de Merkle;
-- **DONE (Gabriel)** troca de um segredo criptográfico usando o Rivest, Shamir e Adleman (RSA);
+- **DONE** geração de um segredo criptográfico a partir de palavras-passe inseridas pelo utilizador, nomeadamente através de algoritmos como o Password Based Key Derivation Function 2 (PBKDF2);
+- **DONE** troca de um segredo criptográfico usando o protocolo de acordo de chaves DiffieHellman;
+- **DONE** troca de um segredo criptográfico usando Puzzles de Merkle;
+- **DONE** troca de um segredo criptográfico usando o Rivest, Shamir e Adleman (RSA);
 - **DONE** distribuição de novas chaves de cifra a partir de chaves pré-distribuídas;
 - distribuição de novas chaves de cifra usando um agente de confiança (neste caso, a
 aplicação desenvolvida deve permitir que uma das instâncias possa ser configurada
 como agente de confiança);
-- **DONE (David)** implementar forma de ter a certeza de que o segredo partilhado é o mesmo dos dois
+- **DONE** implementar forma de ter a certeza de que o segredo partilhado é o mesmo dos dois
 lados.
 
 
@@ -37,7 +37,7 @@ certificados nas trocas de segredos que recorrem ao RSA (e.g., definir um certif
 raiz para o sistema e que já vem embutido no código ou com a aplicação, gerando
 depois certificados digitais para cada um dos utilizadores do sistema);
 - pensar numa forma correta de fornecer certificados digitais a utilizadores;
-- implementar mecanismos de assinatura digital para verificação de integridade em trocas de chave efémeras usando o Diffie-Hellman;
+- **DONE** implementar mecanismos de assinatura digital para verificação de integridade em trocas de chave efémeras usando o Diffie-Hellman;
 - **DONE** possibilitar a escolha de diferentes algoritmos de cifra para os Puzzles de Merkle;
 - **DONE** possibilitar a escolha de diferentes funções de hash para o PBKDF2;
 - **DONE** ter um help bastante completo e ser de simples utilização.

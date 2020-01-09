@@ -11,32 +11,25 @@ import javax.crypto.SecretKey;
 
 public class DES {
     
-    public static byte[] encrypt(String mensagem, SecretKey chaveDES) throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
+    public static byte[] encrypt(String message, SecretKey key) throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
 
-        Cipher cifraDES;
-        // Cria a cifra 
-        cifraDES = Cipher.getInstance("DES");
-
-        // Inicializa a cifra para o processo de encriptação
-        cifraDES.init(Cipher.ENCRYPT_MODE, chaveDES);
-
-        // Texto puro
-        byte[] textoPuro = mensagem.getBytes();
-        // Texto encriptado
-        byte[] textoEncriptado = cifraDES.doFinal(textoPuro);
-        return textoEncriptado;
+        Cipher cipher1;
+        cipher1 = Cipher.getInstance("DES");
+        cipher1.init(Cipher.ENCRYPT_MODE, key);
+        byte[] text = message.getBytes();
+        return cipher1.doFinal(text);
+        
     }
 
-    public static String decrypt(byte[] mensagem, SecretKey chaveDES) throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException, UnsupportedEncodingException {
+    public static String decrypt(byte[] message, SecretKey key) throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException, UnsupportedEncodingException {
 
-        Cipher cifraDES;
-        cifraDES = Cipher.getInstance("DES");
-        cifraDES.init(Cipher.DECRYPT_MODE, chaveDES);
-
-        // Decriptografa o texto
-        byte[] textoDesincriptado = cifraDES.doFinal(mensagem);
-        String value = new String(textoDesincriptado, "UTF-8");
+        Cipher cipher1;
+        cipher1 = Cipher.getInstance("DES");
+        cipher1.init(Cipher.DECRYPT_MODE, key);
+        byte[] text = cipher1.doFinal(message);
+        String value = new String(text, "UTF-8");
         return value;
+        
     }
     
 }

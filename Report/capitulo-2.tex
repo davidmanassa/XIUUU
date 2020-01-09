@@ -1,0 +1,80 @@
+\chapter{Estado da Arte}
+% OU \chapter{Trabalhos Relacionados}
+% OU \chapter{Engenharia de Software}
+% OU \chapter{Tecnologias e Ferramentas Utilizadas}
+\label{chap:estado-da-arte}
+
+\setlength{\parskip}{1em}
+
+\section{Introdução}
+\label{chap2:sec:intro}
+O projeto foi desenvolvido para computador, utilizando a linguagem de programação \textit{JAVA}, compilado e testado com o IDE \emph{NetBeans} em sistemas operativos \emph{Windows} ou \emph{Linux}. A aplicação corre em Graphical User Interface (GUI). O relatório foi desenvolvido utilizando a ferramenta \emph{Share}\LaTeX.
+Nesta secção são abordados tópicos e definições relevantes para compreender alguns algoritmos/protocolos utilizados neste projeto, nomeadamente: o algoritmo \textit{Password Based Key Derivation Function 2} (PBKDF2), o protocolo de acordo de chaves \textit{Diffie-Hellman, Puzzles de Merkle, o Rivest, Shamir e Adleman} (RSA),  \par
+
+No final do capítulo é ainda descrita a linguagem de programação utilizada e a razão da sua escolha para o desenvolvimento deste projeto.
+
+\section{Conceitos Relevantes}
+\label{chap2:sec:...}
+
+\subsection{\textit{Password Based Key Derivation Function 2}(PBKDF2)}
+Esta função vai cifrar um segredo com o auxílio de uma palavra-passe, onde o cliente pode escolher entre várias funções de \textit{hash}. \par
+Com a palavra-passe introduzida, o programa irá pegar na mesma, em \textit{salt}, no número de iterações que terá de executar e no tamanho da chave. O \textit{salt} em conjunto com a palavra-passe utilizada irá gerar um novo vetor de \textit{bytes}. Através disso e com a chave secreta que foi gerada com o auxílio da função de \textit{hash}, vai calcular uma nova chave (com o algoritmo AES). Após isso, usa a chave gerada anteriormente e a mensagem, encriptando a mesma com "AES/CBC/PKCS5Padding"usando o vetor de inicialização e transforma este conjunto de \textit{ bytes} em \textit{base64} para assim ser percetível ao utilizador.
+
+\subsection{Protocolo de acordo de chaves \textit{Diffie-Hellman}}
+Este algoritmo serve para  partilhar um segredo sem que tenha existido uma troca de chaves prévia entre a Alice (cliente emissor) e o Bob (cliente recetor). Usando o protocolo de acordo de chaves Diffie-Hellman um adversário (ou Claire) pode escutar a comunicação, mas não pode manipulá-la.   
+\paragraph{}
+Este acordo de chaves descreve-se da seguinte forma:
+\begin{itemize}
+    \item A Alice e o Bob escolhem um número primo fixo suficiente grande (p). Este número  pode ser tornado público. No nosso caso esse número tem 1024 \textit{bits}.
+    \item De seguida, é definido um gerador g entre 1 e p que pode ser tornado publico.
+    \item Quando estes dois valores (p e g) são combinados entre ambos, a Alice escolhe um numero x entre 1 e p, que irá ser a sua chave secreta, e calcula $X=g^x \bmod p$ e envia X ao Bob. X pode ser público.
+    \item O Bob recebe X e  escolhe um número y , que irá ser a sua chave secreta, entre 1 e p e calcula $Y=g^y \bmod p$ e envia Y para a Alice, o valor Y pode ser tornado público.
+    \item Quando a Alice tiver o Y calcula k da seguinte forma: $k= Y^x \bmod p$. k será a chave secreta que ambos vão ter. O Bob calcula k recorrendo a $k=X^y\bmod p$.
+\end{itemize}
+   \paragraph{}
+   De seguida, é feita uma assinatura deste ficheiro com SHA256 e RSA que será confirmada pelo utilizador recetor do segredo e, caso esta assinatura seja verificada, o segredo será mostrado. Caso contrário o segredo não será exibido. Esta assinatura que é efetuada pela a Alice é feita com a sua chave privada, e para que seja verificada pelo Bob ele tem que pedir à Alice a chave pública.
+
+\subsection{Assinatura Digital}
+
+Este mecanismo criptográfico procura substituir as assinaturas físicas tradicionais com recurso às três ferramentas criptográficas seguintes: infraestrutura de chave pública, cifra de chave pública \textit{Rivest-Shamir-Adleman (RSA)} e funções de \textit{hash}. \par
+
+O processo típico envolve a obtenção do valor de \textit{hash} do ficheiro a assinar e a encriptação do mesmo usando a cifra \textit{RSA}. \par
+Note-se que a encriptação com chave secreta não oferece qualquer ato de cifragem, já que qualquer pessoa pode desencriptar o criptograma com a chave pública da pessoa. Isto permite, contudo, que qualquer pessoa possa verificar a assinatura digital de alguém, ao contrário do que acontece com a assinatura tradicional. \par
+Garantidas estão as seguintes propriedades: \par
+\begin{enumerate}
+    \item Integridade do texto-limpo
+    \item Autenticidade da informação
+    \item Não repúdio
+    \item Dificuldade de falsificação
+\end{enumerate}
+
+\subsection{Funções de \textit{hash}}
+Uma função de \textit{hash} é uma função que recebe um grupo de caracteres e gera um número de tamanho arbitrariamente grande, mas finito, denominado de valor de \textit{hash}. \par
+Funções de \textit{hash} têm diversas funcionalidades, como por exemplo, são usadas para  aumentar a rapidez de extração de dado de uma base de dados, como também são usadas para encriptar ou desencriptar assinaturas digitais. \par
+Algumas das propriedades destas funções incluem:
+\begin{enumerate}
+    \item Resistência à descoberta de texto original
+    \item Resistência à descoberta de um segundo texto
+    \item Resistência à colisão
+\end{enumerate}
+Para o contexto deste trabalho, as funções de hash que forma implementadas são as seguintes:
+\begin{enumerate}
+    \item\textit{ Message Digest 5} (MD5)
+    \item \textit{Secure Hash Algorithm 256} (SHA256)
+\end{enumerate}
+
+
+
+
+ \par
+
+\section{Tecnologias Utilizadas}
+
+\subsection{\textit{Java}}
+\textit{Java} é uma linguagem de programação orientada a objetos que começou a ser criada em 1991, na Sun Microsystems. Teve inicio com o \textit{Green Project}, no qual os mentores foram Patrick Naughton, Mike Sheridan, e James Gosling. Este projeto não tinha intenção de criar uma linguagem de programação, mais sim de antecipar a “próxima onda” que aconteceria na área da informática e programação. Os idealizadores do projeto acreditavam que em pouco tempo os aparelhos domésticos e os computadores teriam uma ligação.
+
+\section{Conclusões}
+\label{chap2:sec:concs}
+
+Com esta secção ficam introduzidos os conceitos técnicos utilizados ao longo destes relatório, facilitando assim o acompanhamento do raciocínio descrito.
+
