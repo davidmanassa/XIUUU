@@ -43,3 +43,7 @@ depois certificados digitais para cada um dos utilizadores do sistema);
 - **DONE** ter um help bastante completo e ser de simples utilização.
 
 Pensem numa forma de atacar o sistema (uma falha da sua implementação) e dediquemlhe uma secção no relatório. Notem que, para efeitos de avaliação e prototipagem, o sistema desenvolvido pode executar localmente todos os seus componentes/aplicações/-programas, desde que simule ou concretize a arquitetura sugerida (i.e., não precisa necessariamente executar em rede).
+
+---
+
+Isto é um projeto de NetBeans.
