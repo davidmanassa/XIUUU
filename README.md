@@ -46,4 +46,4 @@ Pensem numa forma de atacar o sistema (uma falha da sua implementação) e dediq
 
 ---
 
-Isto é um projeto de NetBeans.
+Projeto desenvolvido no IDE NetBeans, para a cadeira de Segurança Informática no ano de 2019/2020.
